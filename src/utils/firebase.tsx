@@ -39,16 +39,29 @@ interface Event {
   // deadline: Date;
 }
 
+interface Comment {
+  eventId: string;
+  author: string;
+  content: string;
+  createdAt: Date;
+  updatedAt?: Date;
+}
+
 export async function getDocData(collectionName: string, docId: string) {
   const docRef = doc(db, collectionName, docId);
   const docSnap = await getDoc(docRef);
-
   return docSnap.data();
 }
 
 export async function setEventDoc(data: Event) {
   const eventRef = doc(collection(db, 'events'));
   await setDoc(eventRef, { ...data, id: eventRef.id });
+  return '成功';
+}
+
+export async function setCommentDoc(data: Comment) {
+  const commentRef = doc(collection(db, 'comments'));
+  await setDoc(commentRef, data);
   return '成功';
 }
 
