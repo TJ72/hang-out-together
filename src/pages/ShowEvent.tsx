@@ -1,25 +1,36 @@
 import React, { useEffect, useState } from 'react';
-import { getDocData, setCommentDoc, joinEvent } from '../utils/firebase';
+import { getDocData, setCommentDoc, updateJoinEvent } from '../utils/firebase';
 
 function ShowEvent() {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [members, setMembers] = useState([]);
+  const [members, setMembers] = useState([] as string[]);
+  const [attend, setAttend] = useState(false);
   const [content, setContent] = useState('');
   useEffect(() => {
     getDocData('events', 'YGZ94uRN6kDRcMpT7ysA').then((event) => {
       setMembers(event!.members);
     });
   }, []);
+  function toggleAttend() {
+    let newMembers = [];
+    if (attend) {
+      newMembers = members.filter((member) => member !== 'Andy');
+    } else {
+      newMembers = [...members, 'Andy'];
+    }
+    setAttend(!attend);
+    return newMembers;
+  }
   return (
     <>
       <button
         type="button"
         onClick={() => {
-          const newMembers = [...members, 'uid'];
-          joinEvent('YGZ94uRN6kDRcMpT7ysA', { members: newMembers });
+          const newMembers = toggleAttend();
+          updateJoinEvent('YGZ94uRN6kDRcMpT7ysA', { members: newMembers });
+          setMembers(newMembers);
         }}
       >
-        Join
+        {attend ? `退出` : '加入'}
       </button>
       <div>評論內容</div>
       <textarea value={content} onChange={(e) => setContent(e.target.value)} />

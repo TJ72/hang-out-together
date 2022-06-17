@@ -61,7 +61,7 @@ export async function setEventDoc(data: Event) {
   return '成功';
 }
 
-export async function joinEvent(
+export async function updateJoinEvent(
   docId: string,
   data: { members: Array<string> },
 ) {
