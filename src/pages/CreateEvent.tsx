@@ -3,6 +3,7 @@ import { setEventDoc, uploadImageToFirebase } from '../utils/firebase';
 
 function CreateEvent() {
   const [title, setTitle] = useState('');
+  const [type, setType] = useState('');
   const [host, setHost] = useState('');
   const [location, setLocation] = useState('');
   const [mainImage, setMainImage] = useState<File | null>(null);
@@ -10,6 +11,8 @@ function CreateEvent() {
     <>
       <div>Title</div>
       <input value={title} onChange={(e) => setTitle(e.target.value)} />
+      <div>Type</div>
+      <input value={type} onChange={(e) => setType(e.target.value)} />
       <div>Host</div>
       <input value={host} onChange={(e) => setHost(e.target.value)} />
       <div>Location</div>
@@ -27,6 +30,7 @@ function CreateEvent() {
           uploadImageToFirebase(mainImage)?.then((res) =>
             setEventDoc({
               title,
+              type,
               host,
               createdAt: new Date(),
               location,

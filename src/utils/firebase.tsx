@@ -5,6 +5,7 @@ import {
   collection,
   getDoc,
   setDoc,
+  updateDoc,
 } from 'firebase/firestore';
 import {
   getStorage,
@@ -29,6 +30,7 @@ const storage = getStorage(app);
 
 interface Event {
   title: string;
+  type: string;
   host: string;
   createdAt: Date;
   location: string;
@@ -56,6 +58,15 @@ export async function getDocData(collectionName: string, docId: string) {
 export async function setEventDoc(data: Event) {
   const eventRef = doc(collection(db, 'events'));
   await setDoc(eventRef, { ...data, id: eventRef.id });
+  return '成功';
+}
+
+export async function joinEvent(
+  docId: string,
+  data: { members: Array<string> },
+) {
+  const docRef = doc(db, 'events', docId);
+  await updateDoc(docRef, data);
   return '成功';
 }
 
