@@ -13,6 +13,7 @@ import {
   getDownloadURL,
   ref,
 } from 'firebase/storage';
+import type { Event } from '../types/event';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -28,19 +29,6 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const storage = getStorage(app);
 
-interface Event {
-  title: string;
-  type: string;
-  host: string;
-  createdAt: Date;
-  location: string;
-  main_image?: string;
-  members: Array<string>;
-  // images: Array<string>;
-  // details: string;
-  // deadline: Date;
-}
-
 interface Comment {
   eventId: string;
   author: string;
@@ -49,31 +37,28 @@ interface Comment {
   updatedAt?: Date;
 }
 
-export async function getDocData(collectionName: string, docId: string) {
-  const docRef = doc(db, collectionName, docId);
+export async function getEventDoc(docId: string) {
+  const docRef = doc(db, 'events', docId);
   const docSnap = await getDoc(docRef);
-  return docSnap.data();
+  return docSnap.data() as Event;
 }
 
 export async function setEventDoc(data: Event) {
   const eventRef = doc(collection(db, 'events'));
   await setDoc(eventRef, { ...data, id: eventRef.id });
-  return '成功';
 }
 
-export async function joinEvent(
+export async function updateEventMembers(
   docId: string,
   data: { members: Array<string> },
 ) {
   const docRef = doc(db, 'events', docId);
   await updateDoc(docRef, data);
-  return '成功';
 }
 
 export async function setCommentDoc(data: Comment) {
   const commentRef = doc(collection(db, 'comments'));
   await setDoc(commentRef, data);
-  return '成功';
 }
 
 export function uploadImageToFirebase(
@@ -104,4 +89,26 @@ export function uploadImageToFirebase(
       },
     );
   });
+}
+
+export async function getUserJoins(uid: string) {
+  const userRef = doc(db, 'users', uid);
+  const docSnap = await getDoc(userRef);
+  return docSnap.data();
+}
+
+export async function updateUserJoins(
+  uid: string,
+  data: (string | undefined)[],
+) {
+  const userRef = doc(db, 'users', uid);
+  await updateDoc(userRef, { joins: data });
+}
+
+export async function updateUserFollows(
+  uid: string,
+  data: (string | undefined)[],
+) {
+  const userRef = doc(db, 'users', uid);
+  await updateDoc(userRef, { follows: data });
 }

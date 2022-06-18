@@ -3,8 +3,10 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import CreateEvent from './pages/CreateEvent';
 import './App.css';
 import ShowEvent from './pages/ShowEvent';
+import login from './utils/login';
 
 function App() {
+  login();
   return (
     <div className="App">
       <Router>
