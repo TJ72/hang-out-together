@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import {
   getEventDoc,
   setCommentDoc,
@@ -9,14 +10,16 @@ import toggleUserJoins from '../utils/toggleUserJoins';
 import toggleUserFollows from '../utils/toggleUserFollow';
 
 function ShowEvent() {
+  const { id } = useParams();
   const [event, setEvent] = useState<Event | null>(null);
   const [members, setMembers] = useState([] as string[]);
   const [attend, setAttend] = useState(false);
   const [content, setContent] = useState('');
-  // user join list
+
+  if (!id) return null;
 
   useEffect(() => {
-    getEventDoc('YGZ94uRN6kDRcMpT7ysA').then((res: Event) => {
+    getEventDoc(id).then((res: Event) => {
       if (!res) return;
       setEvent(res);
       setMembers(res!.members);
