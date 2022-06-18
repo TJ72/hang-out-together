@@ -1,15 +1,31 @@
 import React, { useEffect, useState } from 'react';
-import { getDocData, setCommentDoc, updateJoinEvent } from '../utils/firebase';
+import {
+  getEventDoc,
+  setCommentDoc,
+  updateEventMembers,
+} from '../utils/firebase';
+import type { Event } from '../types/event';
+import toggleUserJoins from '../utils/toggleUserJoins';
+import toggleUserFollows from '../utils/toggleUserFollow';
 
 function ShowEvent() {
+  const [event, setEvent] = useState<Event | null>(null);
   const [members, setMembers] = useState([] as string[]);
   const [attend, setAttend] = useState(false);
   const [content, setContent] = useState('');
+  // user join list
+
   useEffect(() => {
-    getDocData('events', 'YGZ94uRN6kDRcMpT7ysA').then((event) => {
-      setMembers(event!.members);
+    getEventDoc('YGZ94uRN6kDRcMpT7ysA').then((res: Event) => {
+      if (!res) return;
+      setEvent(res);
+      setMembers(res!.members);
+      setAttend(res!.members.includes('Andy'));
     });
   }, []);
+
+  if (!event) return null;
+
   function toggleAttend() {
     let newMembers = [];
     if (attend) {
@@ -20,17 +36,30 @@ function ShowEvent() {
     setAttend(!attend);
     return newMembers;
   }
+
   return (
     <>
+      <div>{event.title}</div>
+      <div>{event.type}</div>
+      <div>{event.host}</div>
       <button
         type="button"
         onClick={() => {
           const newMembers = toggleAttend();
-          updateJoinEvent('YGZ94uRN6kDRcMpT7ysA', { members: newMembers });
+          updateEventMembers(event.id!, { members: newMembers });
           setMembers(newMembers);
+          toggleUserJoins(event.id!);
         }}
       >
-        {attend ? `退出` : '加入'}
+        {attend ? '退出' : '加入'}
+      </button>
+      <button
+        type="button"
+        onClick={() => {
+          toggleUserFollows(event.id!);
+        }}
+      >
+        Follow
       </button>
       <div>評論內容</div>
       <textarea value={content} onChange={(e) => setContent(e.target.value)} />
