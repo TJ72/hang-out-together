@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { updateDoc, doc } from 'firebase/firestore';
 import { auth, db } from '../utils/firebase';
@@ -17,6 +18,8 @@ function Login() {
     error: null,
     loading: false,
   });
+  const navigate = useNavigate();
+
   const { email, password, error, loading } = data;
   const handleChange = (e: { target: { name: any; value: any } }) => {
     setData({ ...data, [e.target.name]: e.target.value });
@@ -39,6 +42,7 @@ function Login() {
         error: null,
         loading: false,
       });
+      navigate('../', { replace: true });
     } catch (err: any) {
       setData({ ...data, error: err.message, loading: false });
     }
