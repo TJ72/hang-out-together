@@ -6,10 +6,12 @@ import {
   onSnapshot,
   addDoc,
   Timestamp,
+  orderBy,
 } from 'firebase/firestore';
 import { db, auth } from '../utils/firebase';
 import ChatRoom from '../components/ChatRoom';
 import MessageForm from '../components/MessageForm';
+import Text from '../components/Text';
 
 interface User {
   createdAt: Date;
@@ -23,10 +25,18 @@ interface User {
   avatarPath?: string;
 }
 
+interface Message {
+  createdAt: Timestamp;
+  from: string;
+  to: string;
+  text: string;
+}
+
 function Messenger() {
   const [users, setUsers] = useState<User[]>([]);
   const [chat, setChat] = useState<User>();
   const [text, setText] = useState('');
+  const [msgs, setMsgs] = useState<Message[]>([]);
   const user1 = auth.currentUser?.uid;
 
   useEffect(() => {
@@ -46,6 +56,18 @@ function Messenger() {
 
   const selectUser = (user: User) => {
     setChat(user);
+    const user2 = user.uid;
+    const id = user1! > user2 ? `${user1 + user2}` : `${user2 + user1}`;
+    const msgsRef = collection(db, 'messages', id, 'chat');
+    const q = query(msgsRef, orderBy('createdAt', 'asc'));
+
+    onSnapshot(q, (querySnapshot) => {
+      const newMsgs = [] as Message[];
+      querySnapshot.forEach((doc) => {
+        newMsgs.push(doc.data() as Message);
+      });
+      setMsgs(newMsgs);
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -73,6 +95,14 @@ function Messenger() {
           <>
             <div className="messages_user">
               <h3>{chat.name}</h3>
+            </div>
+            <div className="messages">
+              {msgs.length
+                ? msgs.map((msg, i) => (
+                    // eslint-disable-next-line react/no-array-index-key
+                    <Text key={i} msg={msg} user1={user1!} />
+                  ))
+                : null}
             </div>
             <MessageForm
               handleSubmit={handleSubmit}
