@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
+  auth,
   getEventDoc,
   setCommentDoc,
   updateEventMembers,
 } from '../utils/firebase';
 import type { Event } from '../types/event';
 import toggleUserJoins from '../utils/toggleUserJoins';
-import toggleUserFollows from '../utils/toggleUserFollow';
+import toggleUserFollows from '../utils/toggleUserFollows';
 
 function ShowEvent() {
   const { id } = useParams();
@@ -15,7 +16,7 @@ function ShowEvent() {
   const [members, setMembers] = useState([] as string[]);
   const [attend, setAttend] = useState(false);
   const [content, setContent] = useState('');
-
+  const user = auth.currentUser;
   if (!id) return null;
 
   useEffect(() => {
@@ -23,7 +24,9 @@ function ShowEvent() {
       if (!res) return;
       setEvent(res);
       setMembers(res!.members);
-      setAttend(res!.members.includes('Andy'));
+      if (user) {
+        setAttend(res!.members.includes(user.uid));
+      }
     });
   }, []);
 
@@ -32,9 +35,9 @@ function ShowEvent() {
   function toggleAttend() {
     let newMembers = [];
     if (attend) {
-      newMembers = members.filter((member) => member !== 'Andy');
+      newMembers = members.filter((member) => member !== user?.uid);
     } else {
-      newMembers = [...members, 'Andy'];
+      newMembers = [...members, user!.uid];
     }
     setAttend(!attend);
     return newMembers;
@@ -48,6 +51,11 @@ function ShowEvent() {
       <button
         type="button"
         onClick={() => {
+          if (!user) {
+            // eslint-disable-next-line no-alert
+            alert('請先登入！');
+            return;
+          }
           const newMembers = toggleAttend();
           updateEventMembers(event.id!, { members: newMembers });
           setMembers(newMembers);
@@ -70,8 +78,8 @@ function ShowEvent() {
         type="button"
         onClick={() => {
           setCommentDoc({
-            eventId: 'YGZ94uRN6kDRcMpT7ysA',
-            author: 'Andy',
+            eventId: id,
+            author: user!.uid,
             content,
             createdAt: new Date(),
           });

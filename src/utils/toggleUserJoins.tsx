@@ -1,18 +1,19 @@
-import { updateUserJoins } from './firebase';
+import { auth, getUserInfo, updateUserJoins } from './firebase';
 
-export default function toggleUserJoins(eventId: string) {
-  const uid = window.localStorage.getItem('uid');
-  if (!uid) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export default async function toggleUserJoins(eventId: string) {
+  const user = auth.currentUser!.uid;
+  if (!user) {
+    // eslint-disable-next-line no-alert
     alert('請先登入');
     return;
   }
-  const userJoins = JSON.parse(window.localStorage.getItem('joins') || '[]');
-  let newUserJoins: (string | undefined)[] = [];
-  if (userJoins.includes(eventId)) {
-    newUserJoins = userJoins.filter((join: string) => join !== eventId);
+  const prevJoins = await getUserInfo(user).then((res) => res!.joins);
+  let currJoins: (string | undefined)[] = [];
+  if (prevJoins.includes(eventId)) {
+    currJoins = prevJoins.filter((join: string) => join !== eventId);
   } else {
-    newUserJoins = [...userJoins, eventId];
+    currJoins = [...prevJoins, eventId];
   }
-  window.localStorage.setItem('joins', JSON.stringify(newUserJoins));
-  updateUserJoins(uid, newUserJoins);
+  updateUserJoins(user, currJoins);
 }
