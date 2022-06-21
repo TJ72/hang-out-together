@@ -1,7 +1,11 @@
+import { getUserInfo } from './firebase';
+
 export default function login() {
-  window.localStorage.setItem('uid', 'T2LR8pBWginrGE31E2UP');
-  window.localStorage.setItem('name', 'Andy');
-  window.localStorage.setItem('mail', 'example@gmail.com');
-  window.localStorage.setItem('joins', '[]');
-  window.localStorage.setItem('follows', '[]');
+  getUserInfo('T2LR8pBWginrGE31E2UP').then((res) => {
+    window.localStorage.setItem('uid', res!.uid);
+    window.localStorage.setItem('name', res!.name);
+    window.localStorage.setItem('mail', res!.mail);
+    window.localStorage.setItem('joins', JSON.stringify(res!.joins));
+    window.localStorage.setItem('follows', JSON.stringify(res!.follows));
+  });
 }

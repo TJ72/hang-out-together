@@ -6,7 +6,7 @@ export interface Event {
   createdAt: Date;
   location: string;
   main_image?: string;
-  members: Array<string>;
+  members: string[];
   // images: Array<string>;
   // details: string;
   // deadline: Date;

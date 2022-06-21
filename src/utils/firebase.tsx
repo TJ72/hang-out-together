@@ -1,11 +1,16 @@
 import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
 import {
   getFirestore,
   doc,
   collection,
   getDoc,
+  getDocs,
   setDoc,
   updateDoc,
+  query,
+  where,
+  onSnapshot,
 } from 'firebase/firestore';
 import {
   getStorage,
@@ -14,10 +19,12 @@ import {
   ref,
 } from 'firebase/storage';
 import type { Event } from '../types/event';
+import type { Room } from '../types/room';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
   authDomain: process.env.REACT_APP_FIREBASE_AUTHDOMAIN,
+  databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL,
   projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
   storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
@@ -26,8 +33,9 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const storage = getStorage(app);
+export const db = getFirestore(app);
+export const storage = getStorage(app);
+export const auth = getAuth(app);
 
 interface Comment {
   eventId: string;
@@ -91,7 +99,7 @@ export function uploadImageToFirebase(
   });
 }
 
-export async function getUserJoins(uid: string) {
+export async function getUserInfo(uid: string) {
   const userRef = doc(db, 'users', uid);
   const docSnap = await getDoc(userRef);
   return docSnap.data();
@@ -111,4 +119,33 @@ export async function updateUserFollows(
 ) {
   const userRef = doc(db, 'users', uid);
   await updateDoc(userRef, { follows: data });
+}
+
+// chatroom
+export async function getUserChatRooms(uid: string) {
+  const fields = query(
+    collection(db, 'rooms'),
+    where('uids', 'array-contains', uid),
+  );
+  const querySnapshot = await getDocs(fields);
+  const rooms = querySnapshot.docs.map((roomDoc) => roomDoc.data() as Room);
+  return rooms;
+}
+
+export function listenToDocument() {
+  const q = query(collection(db, 'rooms'));
+  const unsubscribe = onSnapshot(q, (snapshot) => {
+    snapshot.docChanges().forEach((change) => {
+      if (change.type === 'added') {
+        console.log('New post:', change.doc.data());
+      }
+      if (change.type === 'modified') {
+        console.log('Modified post:', change.doc.data());
+      }
+      if (change.type === 'removed') {
+        console.log('Removed post:', change.doc.data());
+      }
+    });
+  });
+  return unsubscribe;
 }
