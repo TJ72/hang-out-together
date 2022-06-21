@@ -48,6 +48,11 @@ function ShowEvent() {
       <div>{event.title}</div>
       <div>{event.type}</div>
       <div>{event.host}</div>
+      <img
+        style={{ width: '300px', height: '200px' }}
+        src={event.main_image}
+        alt="event sample"
+      />
       <button
         type="button"
         onClick={() => {
