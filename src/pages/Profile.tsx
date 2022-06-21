@@ -62,13 +62,13 @@ function Profile() {
           avatar: '',
           avatarPath: '',
         });
-        setImg(undefined);
+        setUser({ ...user!, avatar: '', avatarPath: '' });
+        // setDeleted(true);
       }
     } catch (e) {
       console.log('Error', e);
     }
   };
-
   return (
     <section>
       <div className="profile_container">
