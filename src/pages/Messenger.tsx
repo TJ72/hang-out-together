@@ -38,7 +38,6 @@ function Messenger() {
   const [text, setText] = useState('');
   const [msgs, setMsgs] = useState<Message[]>([]);
   const user1 = auth.currentUser?.uid;
-
   useEffect(() => {
     const usersRef = collection(db, 'users');
     // create query object

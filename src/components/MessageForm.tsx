@@ -25,6 +25,11 @@ function MessageForm({ handleSubmit, text, setText }: FormProps) {
           placeholder="Enter message"
           value={text}
           onChange={(e) => setText(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              handleSubmit(e);
+            }
+          }}
         />
       </div>
       <div>
