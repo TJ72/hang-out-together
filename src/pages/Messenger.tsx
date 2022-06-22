@@ -7,8 +7,11 @@ import {
   addDoc,
   Timestamp,
   orderBy,
+  setDoc,
+  doc,
 } from 'firebase/firestore';
-import { db, auth } from '../utils/firebase';
+import { ref, getDownloadURL, uploadBytes } from 'firebase/storage';
+import { db, auth, storage } from '../utils/firebase';
 import ChatRoom from '../components/ChatRoom';
 import MessageForm from '../components/MessageForm';
 import Text from '../components/Text';
@@ -30,12 +33,14 @@ interface Message {
   from: string;
   to: string;
   text: string;
+  media?: string;
 }
 
 function Messenger() {
   const [users, setUsers] = useState<User[]>([]);
   const [chat, setChat] = useState<User>();
   const [text, setText] = useState('');
+  const [img, setImg] = useState<File>();
   const [msgs, setMsgs] = useState<Message[]>([]);
   const user1 = auth.currentUser?.uid;
   useEffect(() => {
@@ -45,8 +50,8 @@ function Messenger() {
     // execute query
     const unsub = onSnapshot(q, (querySnapshot) => {
       const currentUsers = [] as User[];
-      querySnapshot.forEach((doc) => {
-        currentUsers.push(doc.data() as User);
+      querySnapshot.forEach((userDoc) => {
+        currentUsers.push(userDoc.data() as User);
       });
       setUsers(currentUsers);
     });
@@ -62,8 +67,8 @@ function Messenger() {
 
     onSnapshot(q, (querySnapshot) => {
       const newMsgs = [] as Message[];
-      querySnapshot.forEach((doc) => {
-        newMsgs.push(doc.data() as Message);
+      querySnapshot.forEach((msgsDoc) => {
+        newMsgs.push(msgsDoc.data() as Message);
       });
       setMsgs(newMsgs);
     });
@@ -73,13 +78,36 @@ function Messenger() {
     e.preventDefault();
     const user2 = chat?.uid;
     const id = user1! > user2! ? `${user1! + user2!}` : `${user2! + user1!}`;
+    let url;
+    if (img) {
+      const imgRef = ref(
+        storage,
+        `images/${new Date().getTime()} - ${img.name}`,
+      );
+      const snap = await uploadBytes(imgRef, img);
+      const dlUrl = await getDownloadURL(ref(storage, snap.ref.fullPath));
+      url = dlUrl;
+    }
+
     await addDoc(collection(db, 'messages', id, 'chat'), {
       text,
       from: user1,
       to: user2,
       createdAt: Timestamp.fromDate(new Date()),
+      media: url || '',
     });
+
+    await setDoc(doc(db, 'lastMsg', id), {
+      text,
+      from: user1,
+      to: user2,
+      createdAt: Timestamp.fromDate(new Date()),
+      media: url || '',
+      unread: true,
+    });
+
     setText('');
+    setImg(undefined);
   };
 
   return (
@@ -107,6 +135,7 @@ function Messenger() {
               handleSubmit={handleSubmit}
               text={text}
               setText={setText}
+              setImg={setImg}
             />
           </>
         ) : (

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import Moment from 'react-moment';
 import { Timestamp } from 'firebase/firestore';
 
 interface Message {
@@ -6,6 +7,7 @@ interface Message {
   from: string;
   to: string;
   text: string;
+  media?: string;
 }
 
 function Text({ msg, user1 }: { msg: Message; user1: string }) {
@@ -20,11 +22,12 @@ function Text({ msg, user1 }: { msg: Message; user1: string }) {
       ref={scrollRef}
     >
       <p className={msg.from === user1 ? 'me' : 'friend'}>
+        {msg.media ? <img src={msg.media} alt={msg.text} /> : null}
         {msg.text}
         <br />
-        {/* <small>
+        <small>
           <Moment fromNow>{msg.createdAt.toDate()}</Moment>
-        </small> */}
+        </small>
       </p>
     </div>
   );

@@ -5,20 +5,22 @@ type FormProps = {
   handleSubmit: Function;
   text: string;
   setText: Function;
+  setImg: Function;
 };
 
-function MessageForm({ handleSubmit, text, setText }: FormProps) {
+function MessageForm({ handleSubmit, text, setText, setImg }: FormProps) {
   return (
-    <form className="message_form">
-      <div>
+    <form className="message_form" onSubmit={(e) => handleSubmit(e)}>
+      <label htmlFor="img">
         <Attachment />
-      </div>
-      <input
-        type="file"
-        id="img"
-        accept="image/*"
-        style={{ display: 'none' }}
-      />
+        <input
+          onChange={(e) => setImg(e.target.files![0])}
+          type="file"
+          id="img"
+          accept="image/*"
+          style={{ display: 'none' }}
+        />
+      </label>
       <div>
         <input
           type="text"
@@ -33,7 +35,7 @@ function MessageForm({ handleSubmit, text, setText }: FormProps) {
         />
       </div>
       <div>
-        <button type="button" className="btn" onClick={(e) => handleSubmit(e)}>
+        <button type="button" className="btn">
           Send
         </button>
       </div>
