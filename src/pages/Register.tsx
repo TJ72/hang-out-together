@@ -41,7 +41,7 @@ function Register() {
         uid: result.user.uid,
         name,
         email,
-        createAt: Timestamp.fromDate(new Date()),
+        createdAt: Timestamp.fromDate(new Date()),
         isOnline: true,
         joins: [],
         follows: [],

@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { getDownloadURL, uploadBytes, ref } from 'firebase/storage';
-import { getDoc, doc, updateDoc } from 'firebase/firestore';
+import {
+  getDownloadURL,
+  uploadBytes,
+  deleteObject,
+  ref,
+} from 'firebase/storage';
+import { getDoc, doc, updateDoc, Timestamp } from 'firebase/firestore';
 import Camera from '../components/svg/Camera';
+import Delete from '../components/svg/Delete';
 import Img from '../assets/avatar.jpg';
 import { storage, db, auth } from '../utils/firebase';
 
 interface User {
-  createdAt: Date;
+  createdAt: Timestamp;
   email: string;
   follows: string[];
   isOnline: boolean;
@@ -32,6 +38,9 @@ function Profile() {
           storage,
           `avatar/${new Date().getTime()} - ${img.name}`,
         );
+        if (user?.avatarPath) {
+          await deleteObject(ref(storage, user.avatarPath));
+        }
         const snap = await uploadBytes(imgRef, img);
         const url = await getDownloadURL(ref(storage, snap.ref.fullPath));
         updateDoc(doc(db, 'users', auth.currentUser!.uid), {
@@ -43,6 +52,23 @@ function Profile() {
       uploadImg();
     }
   }, [img]);
+  const deleteImage = async () => {
+    try {
+      // eslint-disable-next-line no-alert
+      const confirm = window.confirm('Delete avatar?');
+      if (confirm) {
+        await deleteObject(ref(storage, user?.avatarPath));
+        await updateDoc(doc(db, 'users', auth.currentUser!.uid), {
+          avatar: '',
+          avatarPath: '',
+        });
+        setUser({ ...user!, avatar: '', avatarPath: '' });
+      }
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.log('Error', e);
+    }
+  };
   return (
     <section>
       <div className="profile_container">
@@ -60,6 +86,7 @@ function Profile() {
                   onChange={(e) => setImg(e.target.files![0])}
                 />
               </label>
+              {user?.avatar ? <Delete deleteImage={deleteImage} /> : null}
             </div>
           </div>
         </div>
@@ -67,7 +94,7 @@ function Profile() {
           <h3>{user?.name}</h3>
           <p>{user?.email}</p>
           <hr />
-          <small>Joined on: ...</small>
+          <small>Joined on: {user?.createdAt.toDate().toDateString()}</small>
         </div>
       </div>
     </section>
