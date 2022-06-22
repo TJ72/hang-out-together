@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { Timestamp } from 'firebase/firestore';
 import {
@@ -7,8 +6,8 @@ import {
   deleteObject,
   ref,
 } from 'firebase/storage';
+import { setEventDoc, storage } from '../utils/firebase';
 import LoadingImages from '../components/svg/LoadingImages';
-import { setEventDoc, storage, uploadImageToFirebase } from '../utils/firebase';
 
 function CreateEvent() {
   const [title, setTitle] = useState('');
@@ -89,19 +88,17 @@ function CreateEvent() {
 
       <button
         type="button"
-        onClick={() => {
-          uploadImageToFirebase(mainImage!)?.then((res) =>
-            setEventDoc({
-              title,
-              type,
-              host,
-              createdAt: Timestamp.fromDate(new Date()),
-              location,
-              mainImageUrl: res,
-              members: [],
-            }),
-          );
-        }}
+        onClick={() =>
+          setEventDoc({
+            title,
+            type,
+            host,
+            createdAt: Timestamp.fromDate(new Date()),
+            location,
+            mainImageUrl: imgUrl,
+            members: [],
+          })
+        }
       >
         submit
       </button>
