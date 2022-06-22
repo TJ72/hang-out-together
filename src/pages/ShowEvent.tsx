@@ -50,7 +50,7 @@ function ShowEvent() {
       <div>{event.host}</div>
       <img
         style={{ width: '300px', height: '200px' }}
-        src={event.main_image}
+        src={event.mainImageUrl}
         alt="event sample"
       />
       <button

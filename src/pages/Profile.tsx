@@ -63,9 +63,9 @@ function Profile() {
           avatarPath: '',
         });
         setUser({ ...user!, avatar: '', avatarPath: '' });
-        // setDeleted(true);
       }
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.log('Error', e);
     }
   };
