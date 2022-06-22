@@ -1,5 +1,5 @@
 import React from 'react';
-import Img from '../assets/avatar.jpg';
+import Img from '../assets/avatar.png';
 
 interface User {
   createdAt: Date;

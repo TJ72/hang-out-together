@@ -8,7 +8,7 @@ import {
 import { getDoc, doc, updateDoc, Timestamp } from 'firebase/firestore';
 import Camera from '../components/svg/Camera';
 import Delete from '../components/svg/Delete';
-import Img from '../assets/avatar.jpg';
+import Img from '../assets/avatar.png';
 import { storage, db, auth } from '../utils/firebase';
 
 interface User {

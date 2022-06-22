@@ -164,7 +164,7 @@ section .form {
   background: #34eb52;
 }
 .offline {
-  background: var(--color-5);
+  background: #3f3f3f;
 }
 .messages_container {
   position: relative;
