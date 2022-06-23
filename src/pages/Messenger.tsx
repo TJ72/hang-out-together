@@ -7,7 +7,9 @@ import {
   addDoc,
   Timestamp,
   orderBy,
+  getDoc,
   setDoc,
+  updateDoc,
   doc,
 } from 'firebase/firestore';
 import { ref, getDownloadURL, uploadBytes } from 'firebase/storage';
@@ -34,6 +36,7 @@ interface Message {
   to: string;
   text: string;
   media?: string;
+  unread: boolean;
 }
 
 function Messenger() {
@@ -59,7 +62,7 @@ function Messenger() {
     return () => unsub();
   }, []);
 
-  const selectUser = (user: User) => {
+  const selectUser = async (user: User) => {
     setChat(user);
     const user2 = user.uid;
     const id = user1! > user2 ? `${user1 + user2}` : `${user2 + user1}`;
@@ -73,6 +76,10 @@ function Messenger() {
       });
       setMsgs(newMsgs);
     });
+    const docSnap = await getDoc(doc(db, 'lastMsg', id));
+    if (docSnap.data()?.from !== user1) {
+      await updateDoc(doc(db, 'lastMsg', id), { unread: false });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -115,7 +122,13 @@ function Messenger() {
     <div className="home_container">
       <div className="users_container">
         {users.map((user) => (
-          <ChatRoom key={user.uid} user={user} handleSelection={selectUser} />
+          <ChatRoom
+            key={user.uid}
+            user={user}
+            handleSelection={selectUser}
+            user1={user1!}
+            chat={chat!}
+          />
         ))}
       </div>
       <div className="messages_container">
