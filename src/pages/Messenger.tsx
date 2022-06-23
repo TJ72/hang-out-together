@@ -43,6 +43,7 @@ function Messenger() {
   const [img, setImg] = useState<File>();
   const [msgs, setMsgs] = useState<Message[]>([]);
   const user1 = auth.currentUser?.uid;
+
   useEffect(() => {
     const usersRef = collection(db, 'users');
     // create query object
@@ -134,6 +135,7 @@ function Messenger() {
             <MessageForm
               handleSubmit={handleSubmit}
               text={text}
+              img={img}
               setText={setText}
               setImg={setImg}
             />

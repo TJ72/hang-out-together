@@ -4,11 +4,13 @@ import Attachment from './svg/Attachment';
 type FormProps = {
   handleSubmit: Function;
   text: string;
+  img: File | undefined;
   setText: Function;
   setImg: Function;
 };
 
-function MessageForm({ handleSubmit, text, setText, setImg }: FormProps) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function MessageForm({ handleSubmit, text, setText, img, setImg }: FormProps) {
   return (
     <form className="message_form" onSubmit={(e) => handleSubmit(e)}>
       <label htmlFor="img">
@@ -28,7 +30,10 @@ function MessageForm({ handleSubmit, text, setText, setImg }: FormProps) {
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => {
+            // eslint-disable-next-line no-constant-condition
             if (e.key === 'Enter') {
+              e.preventDefault();
+              if (!text && !img) return;
               handleSubmit(e);
             }
           }}
