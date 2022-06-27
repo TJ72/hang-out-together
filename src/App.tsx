@@ -7,6 +7,7 @@ import Register from './pages/Register';
 import Login from './pages/Login';
 import Profile from './pages/Profile';
 import Messenger from './pages/Messenger';
+import Stream from './pages/Stream';
 import AuthProvider from './context/auth';
 import Navbar from './components/NavBar';
 import './App.css';
@@ -25,6 +26,7 @@ function App() {
             <Route path="/messages" element={<Messenger />} />
             <Route path="/create" element={<CreateEvent />} />
             <Route path="/event/:id" element={<ShowEvent />} />
+            <Route path="/stream" element={<Stream />} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>
