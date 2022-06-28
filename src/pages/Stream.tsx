@@ -19,8 +19,8 @@ const servers = {
   ],
   iceCandidatePoolSize: 10,
 };
-// Global State
 const pc = new RTCPeerConnection(servers);
+
 function Stream() {
   let localStream: MediaStream | null = null;
   let remoteStream: MediaStream | null = null;
@@ -42,7 +42,6 @@ function Stream() {
       pc.addTrack(track, localStream!);
     });
     // Pull tracks from remote stream, add to video stream
-    // ontrack??
     pc.ontrack = (event) => {
       event.streams[0].getTracks().forEach((track) => {
         remoteStream?.addTrack(track);
@@ -142,7 +141,6 @@ function Stream() {
 
   return (
     <>
-      <h1>New Build!!</h1>
       <h2>1. Start your Webcam</h2>
       <div
         style={{
