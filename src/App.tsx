@@ -8,6 +8,7 @@ import Login from './pages/Login';
 import Profile from './pages/Profile';
 import Messenger from './pages/Messenger';
 import Stream from './pages/Stream';
+import GroupVideo from './pages/GroupVideo';
 import AuthProvider from './context/auth';
 import Navbar from './components/NavBar';
 import './App.css';
@@ -27,6 +28,7 @@ function App() {
             <Route path="/create" element={<CreateEvent />} />
             <Route path="/event/:id" element={<ShowEvent />} />
             <Route path="/stream" element={<Stream />} />
+            <Route path="/video/:topic" element={<GroupVideo />} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>

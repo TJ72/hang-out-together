@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
+import { getDatabase } from 'firebase/database';
 import {
   getFirestore,
   doc,
@@ -10,14 +11,8 @@ import {
   updateDoc,
   query,
   where,
-  onSnapshot,
 } from 'firebase/firestore';
-import {
-  getStorage,
-  uploadBytesResumable,
-  getDownloadURL,
-  ref,
-} from 'firebase/storage';
+import { getStorage } from 'firebase/storage';
 import type { Event } from '../types/event';
 import type { Room } from '../types/room';
 
@@ -36,6 +31,7 @@ const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 export const auth = getAuth(app);
+export const database = getDatabase(app);
 
 interface Comment {
   eventId: string;
@@ -69,36 +65,6 @@ export async function setCommentDoc(data: Comment) {
   await setDoc(commentRef, data);
 }
 
-export function uploadImageToFirebase(
-  file: File | null,
-): Promise<string> | null {
-  if (file === null) return null;
-  return new Promise((resolve, reject) => {
-    const metadata = {
-      contentType: file.type,
-    };
-    const fileRef = ref(storage, `images/${file.name}`);
-    const uploadTask = uploadBytesResumable(fileRef, file, metadata);
-    uploadTask.on(
-      'state_changed',
-      (snapshot) => {
-        console.log(snapshot.state);
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log(`Upload is ${progress}% done`);
-      },
-      (error) => {
-        console.error(error);
-        reject(error);
-      },
-      async () => {
-        const data = await getDownloadURL(uploadTask.snapshot.ref);
-        resolve(data);
-      },
-    );
-  });
-}
-
 export async function getUserInfo(uid: string) {
   const userRef = doc(db, 'users', uid);
   const docSnap = await getDoc(userRef);
@@ -130,22 +96,4 @@ export async function getUserChatRooms(uid: string) {
   const querySnapshot = await getDocs(fields);
   const rooms = querySnapshot.docs.map((roomDoc) => roomDoc.data() as Room);
   return rooms;
-}
-
-export function listenToDocument() {
-  const q = query(collection(db, 'rooms'));
-  const unsubscribe = onSnapshot(q, (snapshot) => {
-    snapshot.docChanges().forEach((change) => {
-      if (change.type === 'added') {
-        console.log('New post:', change.doc.data());
-      }
-      if (change.type === 'modified') {
-        console.log('Modified post:', change.doc.data());
-      }
-      if (change.type === 'removed') {
-        console.log('Removed post:', change.doc.data());
-      }
-    });
-  });
-  return unsubscribe;
 }
