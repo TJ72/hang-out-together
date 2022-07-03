@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Timestamp } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
+import { Timestamp, collection, doc, setDoc } from 'firebase/firestore';
 import {
   getDownloadURL,
   uploadBytes,
   deleteObject,
   ref,
 } from 'firebase/storage';
-import { setEventDoc, storage } from '../utils/firebase';
+import { db, storage } from '../utils/firebase';
+import type { Event } from '../types/event';
 import LoadingImages from '../components/svg/LoadingImages';
 
 function CreateEvent() {
@@ -17,6 +19,8 @@ function CreateEvent() {
   const [mainImage, setMainImage] = useState<File>();
   const [imgUrl, setImgUrl] = useState('');
   const [imgPath, setImgPath] = useState('');
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (mainImage) {
       const uploadImg = async () => {
@@ -36,6 +40,12 @@ function CreateEvent() {
       uploadImg();
     }
   }, [mainImage]);
+
+  const setEventDoc = async (data: Event) => {
+    const eventRef = doc(collection(db, 'events'));
+    await setDoc(eventRef, { ...data, id: eventRef.id });
+    navigate(`/event/${eventRef.id}`, { replace: true });
+  };
 
   return (
     <>
