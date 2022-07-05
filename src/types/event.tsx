@@ -5,6 +5,7 @@ export interface Event {
   title: string;
   type: string;
   host: string;
+  date: Timestamp;
   createdAt: Timestamp;
   location: string;
   mainImageUrl: string;

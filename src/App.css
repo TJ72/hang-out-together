@@ -12,15 +12,15 @@
 }
 
 /* Navbar */
-nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 70px;
-  padding: 0px 20px;
-  /* background-color: var(--color-1); */
-  border-bottom: 1px solid var(--color-6);
-}
+/* nav { */
+/* display: flex; */
+/* align-items: center; */
+/* justify-content: space-between; */
+/* height: 70px; */
+/* padding: 0px 20px; */
+/* background-color: var(--color-1); */
+/* border-bottom: 1px solid var(--color-6); */
+/* } */
 nav a {
   /* color: var(--color-2); */
   text-decoration: none;
@@ -164,7 +164,7 @@ section .form {
   background: #34eb52;
 }
 .offline {
-  background: #3f3f3f;
+  background: #777575;
 }
 .messages_container {
   position: relative;
@@ -233,10 +233,13 @@ section .form {
   color: white;
 }
 .friend {
-  background: var(--color-6);
+  /* background: var(--color-6); */
+  border: 1px solid var(--color-3);
+  color: var(--color-3);
 }
 .selected_user {
-  background: var(--color-6);
+  background: var(--color-3);
+  opacity: 0.6;
 }
 .truncate {
   font-size: 14px;
@@ -258,6 +261,23 @@ section .form {
 .sm_screen {
   display: none;
 }
+#peers {
+  width: 90%;
+  min-height: 80vh;
+  margin-top: 40px;
+  padding: 60px 40px;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  background-color: #3f3f3f;
+  object-fit: cover;
+}
+#peers video {
+  width: 400px;
+  height: 300px;
+}
+
 @media screen and (max-width: 767px) {
   .home_container {
     grid-template-columns: 2fr 3fr;

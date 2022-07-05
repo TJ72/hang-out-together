@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import DatePicker from 'react-datepicker';
 import { Timestamp, collection, doc, setDoc } from 'firebase/firestore';
 import {
   getDownloadURL,
@@ -10,12 +11,14 @@ import {
 import { db, storage } from '../utils/firebase';
 import type { Event } from '../types/event';
 import LoadingImages from '../components/svg/LoadingImages';
+import 'react-datepicker/dist/react-datepicker.css';
 
 function CreateEvent() {
   const [title, setTitle] = useState('');
   const [type, setType] = useState('Outdoor');
   const [host, setHost] = useState('');
   const [location, setLocation] = useState('');
+  const [date, setDate] = useState(new Date());
   const [mainImage, setMainImage] = useState<File>();
   const [imgUrl, setImgUrl] = useState('');
   const [imgPath, setImgPath] = useState('');
@@ -62,6 +65,11 @@ function CreateEvent() {
       <input value={host} onChange={(e) => setHost(e.target.value)} />
       <div>Location</div>
       <input value={location} onChange={(e) => setLocation(e.target.value)} />
+      <div>Event Date</div>
+      <DatePicker
+        selected={date}
+        onChange={(selectedDate: Date) => setDate(selectedDate)}
+      />
       <div>Main Image</div>
       <label
         htmlFor="photo"
@@ -103,6 +111,7 @@ function CreateEvent() {
             title,
             type,
             host,
+            date: Timestamp.fromDate(date),
             createdAt: Timestamp.fromDate(new Date()),
             location,
             mainImageUrl: imgUrl,

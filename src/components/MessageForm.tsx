@@ -26,6 +26,7 @@ function MessageForm({ handleSubmit, text, setText, img, setImg }: FormProps) {
       <div>
         <input
           type="text"
+          style={{ border: '1px solid #3f3f3f' }}
           placeholder="Enter message"
           value={text}
           onChange={(e) => setText(e.target.value)}

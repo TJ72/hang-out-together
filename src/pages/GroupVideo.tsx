@@ -4,6 +4,7 @@
 // @ts-nocheck
 import React, { useRef } from 'react';
 import { useParams } from 'react-router-dom';
+import styled from 'styled-components';
 import {
   ref,
   child,
@@ -14,6 +15,12 @@ import {
 } from 'firebase/database';
 import { rtcFireSession } from '../utils/rtcfire';
 import { database } from '../utils/firebase';
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
 
 // function Video({ videoStream }) {
 //   const videoRef = useRef<HTMLVideoElement>(null);
@@ -35,9 +42,9 @@ function GroupVideo() {
 
     // new and existing peers
     for (const pid of participants) {
-      let node = parent!.querySelector(`li[data-pid="${pid}"]`);
+      let node = parent!.querySelector(`div[data-pid="${pid}"]`);
       if (!node) {
-        node = document.createElement('li');
+        node = document.createElement('div');
         node.setAttribute('data-pid', pid);
         node.innerHTML = '<video autoplay playsinline>';
         parent!.appendChild(node);
@@ -48,7 +55,7 @@ function GroupVideo() {
     }
 
     // removed peers
-    for (const existing of parent.querySelectorAll('li')) {
+    for (const existing of parent.querySelectorAll('div')) {
       if (!participants.has(existing.getAttribute('data-pid'))) {
         parent!.removeChild(existing);
       }
@@ -56,9 +63,9 @@ function GroupVideo() {
 
     // zero state
     const zero = participants.size === 0;
-    document.querySelector('#peers-header')!.style.display = zero
-      ? 'none'
-      : 'block';
+    // document.querySelector('#peers-header')!.style.display = zero
+    //   ? 'none'
+    //   : 'block';
     document.querySelector('#zero-state').style.display = zero
       ? 'block'
       : 'none';
@@ -96,21 +103,15 @@ function GroupVideo() {
   setupVideo();
 
   return (
-    <>
-      <h1>Multi Peer Video Chat</h1>
-      <video
-        id="my-video"
-        muted
-        autoPlay
-        playsInline
-        style={{ width: '300px', height: '200px' }}
-      />
-      <h3 id="peers-header">Other participants</h3>
-      <ul id="peers" />
+    <Wrapper>
+      <h1>Multi Peers Video Chat</h1>
+      <div id="peers">
+        <video id="my-video" muted autoPlay playsInline />
+      </div>
       <div id="zero-state">
         Share the URL with a friend, or open it in another tab!
       </div>
-    </>
+    </Wrapper>
   );
 }
 
