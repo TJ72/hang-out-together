@@ -9,23 +9,34 @@ import Loading from '../components/Loading';
 export const AuthContext = createContext<IUser | null>(null);
 
 function AuthProvider({ children }: { children: JSX.Element }) {
-  const [user, setUser] = useState<IUser | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [userInfo, setUserInfo] = useState<IUser | null>(null);
+
   useEffect(() => {
-    const getUserInfo = async (currUser: User) => {
-      getDoc(doc(db, 'users', currUser.uid)).then((docSnap) => {
-        if (docSnap.exists()) {
-          setUser(docSnap.data() as IUser);
-          setLoading(false);
-        }
-      });
-    };
-    onAuthStateChanged(auth, getUserInfo as NextOrObserver<User>);
+    function HandleLogIn(users: User) {
+      setUser(users);
+      setLoading(false);
+    }
+    onAuthStateChanged(auth, HandleLogIn as NextOrObserver<User>);
   }, []);
+
+  useEffect(() => {
+    if (!user) return;
+    const getUserInfo = async () => {
+      await getDoc(doc(db, 'users', user!.uid)).then((docSnap) =>
+        setUserInfo(docSnap.data() as IUser),
+      );
+    };
+    getUserInfo();
+  }, [user]);
+
   if (loading) {
     return <Loading />;
   }
-  return <AuthContext.Provider value={user}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={userInfo}>{children}</AuthContext.Provider>
+  );
 }
 
 export default AuthProvider;

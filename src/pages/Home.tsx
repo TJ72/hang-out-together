@@ -29,6 +29,7 @@ const Container = styled.div`
 
 const Item = styled.div`
   width: 30%;
+  padding-bottom: 10px;
   box-shadow: 0 0 5px #c4c0c0;
   border-radius: 3px;
   overflow: hidden;
