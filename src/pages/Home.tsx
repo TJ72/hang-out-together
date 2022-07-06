@@ -28,7 +28,7 @@ const Container = styled.div`
 `;
 
 const Item = styled.div`
-  width: 300px;
+  width: 30%;
   box-shadow: 0 0 5px #c4c0c0;
   border-radius: 3px;
   overflow: hidden;
@@ -36,12 +36,12 @@ const Item = styled.div`
     transition: 1s;
   }
   img:hover {
-    transform: scale(1.1);
+    transform: scale(1.2);
   }
 `;
 
 const ItemInfo = styled.div`
-  margin-left: 7px;
+  margin-left: 8px;
   color: #3f3f3f;
 `;
 
@@ -52,6 +52,7 @@ const ItemTitle = styled.div`
 `;
 
 const ItemDetail = styled.div`
+  margin-top: 3px;
   line-height: 25px;
   font-size: 1rem;
   font-weight: 450;
@@ -107,12 +108,13 @@ function Home() {
             key={event.id}
             id={event.id}
             title={event.title}
+            host={event.host}
+            type={event.type}
             location={event.location}
             date={event.date}
             members={event.members}
             mainImageUrl={event.mainImageUrl}
-            type={event.type}
-            host={event.host}
+            detail={event.detail}
             createdAt={event.createdAt}
           />
         ))}

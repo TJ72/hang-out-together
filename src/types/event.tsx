@@ -10,7 +10,5 @@ export interface Event {
   location: string;
   mainImageUrl: string;
   members: string[];
-  // images: Array<string>;
-  // details: string;
-  // deadline: Date;
+  detail: string;
 }

@@ -17,6 +17,7 @@ const Wrapper = styled.nav`
   top: 0;
   box-shadow: 0 0 5px #c4c0c0;
   background-color: #fff;
+  z-index: 10;
 `;
 
 const Logo = styled.div`

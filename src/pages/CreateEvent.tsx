@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import ReactQuill from 'react-quill';
 import DatePicker from 'react-datepicker';
 import { Timestamp, collection, doc, setDoc } from 'firebase/firestore';
 import {
@@ -9,21 +11,35 @@ import {
   ref,
 } from 'firebase/storage';
 import { db, storage } from '../utils/firebase';
-import type { Event } from '../types/event';
 import LoadingImages from '../components/svg/LoadingImages';
+import type { Event } from '../types/event';
+import 'react-quill/dist/quill.snow.css';
 import 'react-datepicker/dist/react-datepicker.css';
+import { AuthContext } from '../context/auth';
+
+const Wrapper = styled.div`
+  margin-top: 115px;
+`;
+
+const Title = styled.div`
+  margin-top: 10px;
+  margin-bottom: 7px;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #3f3d56;
+`;
 
 function CreateEvent() {
   const [title, setTitle] = useState('');
   const [type, setType] = useState('Outdoor');
-  const [host, setHost] = useState('');
   const [location, setLocation] = useState('');
   const [date, setDate] = useState(new Date());
   const [mainImage, setMainImage] = useState<File>();
   const [imgUrl, setImgUrl] = useState('');
   const [imgPath, setImgPath] = useState('');
+  const [detail, setDetail] = useState('');
   const navigate = useNavigate();
-
+  const userInfo = useContext(AuthContext);
   useEffect(() => {
     if (mainImage) {
       const uploadImg = async () => {
@@ -51,26 +67,24 @@ function CreateEvent() {
   };
 
   return (
-    <>
-      <div>Title</div>
+    <Wrapper>
+      <Title>Title</Title>
       <input value={title} onChange={(e) => setTitle(e.target.value)} />
-      <div>Type</div>
+      <Title>Type</Title>
       <select value={type} onChange={(e) => setType(e.target.value)}>
         <option>Outdoor</option>
         <option>Indoor</option>
         <option>Online</option>
         <option>Other</option>
       </select>
-      <div>Host</div>
-      <input value={host} onChange={(e) => setHost(e.target.value)} />
-      <div>Location</div>
+      <Title>Location</Title>
       <input value={location} onChange={(e) => setLocation(e.target.value)} />
-      <div>Event Date</div>
+      <Title>Event Date</Title>
       <DatePicker
         selected={date}
         onChange={(selectedDate: Date) => setDate(selectedDate)}
       />
-      <div>Main Image</div>
+      <Title>Main Image</Title>
       <label
         htmlFor="photo"
         style={{
@@ -103,25 +117,27 @@ function CreateEvent() {
           }}
         />
       </label>
-
+      <Title>Detail</Title>
+      <ReactQuill theme="snow" value={detail} onChange={setDetail} />
       <button
         type="button"
         onClick={() =>
           setEventDoc({
             title,
             type,
-            host,
+            host: userInfo!.name,
             date: Timestamp.fromDate(date),
             createdAt: Timestamp.fromDate(new Date()),
             location,
             mainImageUrl: imgUrl,
+            detail,
             members: [],
           })
         }
       >
         submit
       </button>
-    </>
+    </Wrapper>
   );
 }
 
