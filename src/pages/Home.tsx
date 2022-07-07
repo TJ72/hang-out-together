@@ -28,7 +28,7 @@ const Container = styled.div`
 `;
 
 const Item = styled.div`
-  width: 30%;
+  width: 100%;
   padding-bottom: 10px;
   box-shadow: 0 0 5px #c4c0c0;
   border-radius: 3px;
@@ -69,7 +69,7 @@ function EventItem({
   mainImageUrl,
 }: Event) {
   return (
-    <Link style={{ textDecoration: 'none' }} to={`/event/${id}`}>
+    <Link style={{ textDecoration: 'none', width: '30%' }} to={`/event/${id}`}>
       <Item>
         <img style={{ width: '100%' }} src={mainImageUrl} alt="Activity" />
         <ItemInfo>

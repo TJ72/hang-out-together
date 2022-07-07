@@ -22,7 +22,7 @@ const Wrapper = styled.nav`
 const Logo = styled.div`
   font-size: 2.5rem;
   font-family: 'Kaushan Script';
-  color: #f0165f;
+  color: #f54545;
 `;
 
 const NavItems = styled.div`
