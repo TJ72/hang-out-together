@@ -15,6 +15,7 @@ import {
 import { getStorage } from 'firebase/storage';
 import type { Event } from '../types/event';
 import type { Room } from '../types/room';
+import { IUser } from '../types/user';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -33,12 +34,11 @@ export const storage = getStorage(app);
 export const auth = getAuth(app);
 export const database = getDatabase(app);
 
-interface Comment {
+export interface Comment {
   eventId: string;
-  author: string;
+  author: IUser;
   content: string;
   createdAt: Date;
-  updatedAt?: Date;
 }
 
 export async function getEventDoc(docId: string) {
@@ -54,7 +54,7 @@ export async function setEventDoc(data: Event) {
 
 export async function updateEventMembers(
   docId: string,
-  data: { members: Array<string> },
+  data: { members: Array<IUser | null> },
 ) {
   const docRef = doc(db, 'events', docId);
   await updateDoc(docRef, data);

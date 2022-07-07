@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
@@ -59,7 +58,7 @@ const Wrapper = styled.div`
 
 const Title = styled.div`
   margin-top: 10px;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   font-size: 1.3rem;
   font-weight: 600;
   color: #3f3d56;
@@ -252,19 +251,14 @@ function CreateEvent() {
         />
       </ImageContainer>
       <Title>Detail</Title>
-      <ReactQuill
-        theme="snow"
-        style={{ height: '250px' }}
-        value={detail}
-        onChange={setDetail}
-      />
+      <ReactQuill value={detail} onChange={setDetail} />
       <SubmitBtn
         type="button"
         onClick={() =>
           setEventDoc({
             title,
             type,
-            host: userInfo!.name,
+            host: userInfo!,
             date: Timestamp.fromDate(date),
             createdAt: Timestamp.fromDate(new Date()),
             location,

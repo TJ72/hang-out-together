@@ -9,4 +9,5 @@ export interface IUser {
   joins: [];
   name: string;
   uid: string;
+  avatar?: string;
 }

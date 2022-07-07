@@ -74,7 +74,7 @@ function EventItem({
         <img style={{ width: '100%' }} src={mainImageUrl} alt="Activity" />
         <ItemInfo>
           <ItemTitle>{title}</ItemTitle>
-          <ItemDetail>Hosted by: {host}</ItemDetail>
+          <ItemDetail>Hosted by: {host.name}</ItemDetail>
           <ItemDetail>{location}</ItemDetail>
           <ItemDetail>{date.toDate().toDateString()}</ItemDetail>
           <ItemDetail>{members.length} attendees</ItemDetail>
