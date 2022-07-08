@@ -2,7 +2,14 @@
 import React, { useEffect, useState, useContext } from 'react';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
-import { collection, getDocs, orderBy, query, where } from 'firebase/firestore';
+import {
+  collection,
+  getDocs,
+  orderBy,
+  query,
+  where,
+  Timestamp,
+} from 'firebase/firestore';
 import {
   Comment,
   db,
@@ -20,6 +27,7 @@ import Location from '../components/svg/Location';
 import { IUser } from '../types/user';
 
 const Wrapper = styled.div`
+  padding-bottom: 50px;
   margin-top: 115px;
 `;
 
@@ -64,7 +72,7 @@ const Host = styled.div`
     width: 45px;
     height: 45px;
     border-radius: 50%;
-    border: 1px solid #3f3f3f;
+    border: 1px solid #b3adad;
   }
 `;
 
@@ -109,11 +117,95 @@ const MemberWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 6px;
   box-shadow: 0 0 5px #c4c0c0;
   img {
     width: 60px;
     height: 60px;
     border-radius: 50%;
+    border: 1px solid #b3adad;
+  }
+`;
+
+const DetailTitle = styled.div`
+  width: 70%;
+  padding-bottom: 7px;
+  margin-top: 35px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 2px -2px #f65858;
+  font-size: 1.4rem;
+  font-weight: 550;
+`;
+
+const CommentsContainer = styled.div`
+  width: 70%;
+  min-width: 600px;
+  margin-top: 50px;
+`;
+
+const CommentTitle = styled.div`
+  padding-bottom: 7px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 2px -2px #f65858;
+  font-size: 1.4rem;
+  font-weight: 550;
+`;
+
+const TextArea = styled.div`
+  display: flex;
+  gap: 25px;
+  img {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    border: 1px solid #b3adad;
+  }
+  textarea {
+    width: calc(100% - 150px);
+    height: 100px;
+    padding: 7px;
+    resize: none;
+    border: 1px solid #b3adad;
+    border-radius: 5px;
+    font-size: 1rem;
+    letter-spacing: 0.7px;
+    :focus {
+      outline: 0 !important;
+      box-shadow: 0 0 1px 1px #043957;
+    }
+  }
+`;
+
+const TextSubmitBtn = styled.button`
+  width: 80px;
+  height: 38px;
+  margin-left: 80px;
+  margin-top: 10px;
+  border: 0;
+  border-radius: 6px;
+  color: #fff;
+  background-color: #043957;
+  font-size: 0.9rem;
+  cursor: pointer;
+  :hover {
+    color: #043957;
+    background-color: #aad7f0;
+  }
+`;
+
+const CommentWrapper = styled.div`
+  margin-top: 20px;
+  display: flex;
+  gap: 25px;
+  img {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    border: 1px solid #b3adad;
+  }
+  span {
+    margin-left: 25px;
+    color: #98999b;
   }
 `;
 
@@ -123,6 +215,27 @@ function Member({ name, avatar }: { name: string; avatar: string }) {
       <img src={avatar || Avatar} alt="member avatar" />
       <div style={{ fontSize: '1rem' }}>{name}</div>
     </MemberWrapper>
+  );
+}
+
+type CommentProps = {
+  name: string;
+  avatar: string;
+  content: string;
+  createdAt: Timestamp;
+};
+
+function EventComment({ name, avatar, content, createdAt }: CommentProps) {
+  return (
+    <CommentWrapper>
+      <img src={avatar || Avatar} alt="user avatar" />
+      <div>
+        <div style={{ fontWeight: '500' }}>
+          {name} <span>{createdAt.toDate().toDateString()}</span>
+        </div>
+        <div style={{ marginTop: '4px', fontSize: '1.1rem' }}>{content}</div>
+      </div>
+    </CommentWrapper>
   );
 }
 
@@ -153,7 +266,7 @@ function ShowEvent() {
       const commentsField = query(
         collection(db, 'comments'),
         where('eventId', '==', id),
-        orderBy('createdAt', 'asc'),
+        orderBy('createdAt', 'desc'),
       );
       const querySnapshot = await getDocs(commentsField);
       const commentsDoc = querySnapshot.docs.map((commentDoc) =>
@@ -205,7 +318,7 @@ function ShowEvent() {
             toggleUserJoins(event.id!);
           }}
         >
-          {attend ? 'Disjoin' : 'Attend'}
+          {attend ? 'Cancel' : 'Attend'}
         </JoinBtn>
         <Host>
           <img src={event.host.avatar || Avatar} alt="avatar" />
@@ -252,26 +365,56 @@ function ShowEvent() {
         >
           Follow
         </button> */}
-        <div>評論內容</div>
-        <textarea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-        />
-        <button
-          type="button"
-          onClick={() => {
-            if (!content) return;
-            setCommentDoc({
-              eventId: id,
-              author: user!,
-              content,
-              createdAt: new Date(),
-            });
-            setContent('');
-          }}
-        >
-          submit
-        </button>
+        <DetailTitle>More Detail</DetailTitle>
+        {/* eslint-disable-next-line react/no-danger */}
+        <div dangerouslySetInnerHTML={{ __html: event.detail }} />
+        <CommentsContainer>
+          <CommentTitle>Comments ({comments.length})</CommentTitle>
+          <TextArea>
+            <img
+              src={!user || !user.avatar ? Avatar : user.avatar}
+              alt="Avatar"
+            />
+            <textarea
+              placeholder="Leave some comments"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+            />
+          </TextArea>
+          <TextSubmitBtn
+            type="button"
+            onClick={() => {
+              if (!content) return;
+              setCommentDoc({
+                eventId: id,
+                author: user!,
+                content,
+                createdAt: Timestamp.fromDate(new Date()),
+              });
+              setContent('');
+              setComments([
+                {
+                  author: user,
+                  eventId: id,
+                  content,
+                  createdAt: Timestamp.fromDate(new Date()),
+                } as Comment,
+                ...comments,
+              ]);
+            }}
+          >
+            Submit
+          </TextSubmitBtn>
+          {comments.map((comment) => (
+            <EventComment
+              key={comment!.createdAt.toString()}
+              name={comment!.author.name}
+              createdAt={comment!.createdAt}
+              avatar={comment!.author?.avatar || ''}
+              content={comment!.content}
+            />
+          ))}
+        </CommentsContainer>
       </Container>
     </Wrapper>
   );

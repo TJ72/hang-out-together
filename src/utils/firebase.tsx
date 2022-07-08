@@ -11,6 +11,7 @@ import {
   updateDoc,
   query,
   where,
+  Timestamp,
 } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import type { Event } from '../types/event';
@@ -38,7 +39,8 @@ export interface Comment {
   eventId: string;
   author: IUser;
   content: string;
-  createdAt: Date;
+  createdAt: Timestamp;
+  id?: string;
 }
 
 export async function getEventDoc(docId: string) {
@@ -62,7 +64,7 @@ export async function updateEventMembers(
 
 export async function setCommentDoc(data: Comment) {
   const commentRef = doc(collection(db, 'comments'));
-  await setDoc(commentRef, data);
+  await setDoc(commentRef, { ...data, id: commentRef.id });
 }
 
 export async function getUserInfo(uid: string) {
