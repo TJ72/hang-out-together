@@ -41,7 +41,14 @@ function MessageForm({ handleSubmit, text, setText, img, setImg }: FormProps) {
         />
       </div>
       <div>
-        <button type="button" className="btn">
+        <button
+          type="button"
+          className="btn"
+          onClick={(e) => {
+            if (!text && !img) return;
+            handleSubmit(e);
+          }}
+        >
           Send
         </button>
       </div>

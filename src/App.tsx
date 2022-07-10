@@ -27,8 +27,8 @@ function App() {
             <Route path="/messages" element={<Messenger />} />
             <Route path="/create" element={<CreateEvent />} />
             <Route path="/event/:id" element={<ShowEvent />} />
-            <Route path="/stream" element={<Stream />} />
-            <Route path="/video/:topic" element={<GroupVideo />} />
+            <Route path="/stream/:id" element={<Stream />} />
+            <Route path="/group-video/:topic" element={<GroupVideo />} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>

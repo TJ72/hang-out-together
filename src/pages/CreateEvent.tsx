@@ -54,7 +54,7 @@ const Wrapper = styled.div`
   padding: 30px 30px;
   margin: 115px auto 60px;
   background-color: #fff;
-  border-radius: 6px;
+  border-radius: 12px;
 `;
 
 const Title = styled.div`
@@ -103,7 +103,7 @@ const ImageContainer = styled.label`
   align-items: center;
   justify-content: center;
   background-color: rgb(238, 238, 238);
-  border-radius: 3px;
+  border-radius: 12px;
   color: #3f3d56;
   font-size: 1rem;
   font-weight: 500;

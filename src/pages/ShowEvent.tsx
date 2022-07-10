@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState, useContext } from 'react';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
@@ -20,7 +19,7 @@ import {
 import { AuthContext } from '../context/auth';
 import type { Event } from '../types/event';
 import toggleUserJoins from '../utils/toggleUserJoins';
-import toggleUserFollows from '../utils/toggleUserFollows';
+// import toggleUserFollows from '../utils/toggleUserFollows';
 import Avatar from '../assets/avatar.png';
 import Time from '../components/svg/Time';
 import Location from '../components/svg/Location';
@@ -61,7 +60,7 @@ const Title = styled.div`
   margin: 0 auto;
   font-size: 2rem;
   font-family: 'Heebo';
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 1.2px;
 `;
 

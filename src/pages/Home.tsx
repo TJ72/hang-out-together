@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { collection, getDocs, orderBy, query, where } from 'firebase/firestore';
 import { db } from '../utils/firebase';
@@ -16,6 +16,36 @@ const Cover = styled.div`
   background: url(${CoverImage}) no-repeat center center;
   background-size: cover;
   border: none;
+  position: relative;
+  div {
+    font-family: 'Courgette';
+    font-weight: 600;
+    font-size: 2.5rem;
+    color: #e6776796;
+    position: absolute;
+    top: 30%;
+    right: 5%;
+  }
+`;
+
+const CreateBtn = styled.button`
+  width: 180px;
+  height: 60px;
+  background-color: #f54545;
+  color: #fff;
+  font-size: 1.3rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  position: absolute;
+  bottom: 15%;
+  right: 7%;
+  cursor: pointer;
+  :hover {
+    background-color: #e6776796;
+    color: #f54545;
+    border: 1px solid #f54545;
+  }
 `;
 
 const Container = styled.div`
@@ -23,17 +53,20 @@ const Container = styled.div`
   max-width: 1160px;
   margin: 90px auto;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: 5%;
   flex-wrap: wrap;
 `;
 
 const Item = styled.div`
   width: 100%;
   padding-bottom: 10px;
+  margin-bottom: 40px;
   box-shadow: 0 0 5px #c4c0c0;
   border-radius: 3px;
   overflow: hidden;
   img {
+    height: 215px;
     transition: 1s;
   }
   img:hover {
@@ -47,9 +80,9 @@ const ItemInfo = styled.div`
 `;
 
 const ItemTitle = styled.div`
-  margin-top: 16px;
+  margin-top: 19px;
   font-size: 1.25rem;
-  font-weight: 500;
+  font-weight: 600;
 `;
 
 const ItemDetail = styled.div`
@@ -74,7 +107,9 @@ function EventItem({
         <img style={{ width: '100%' }} src={mainImageUrl} alt="Activity" />
         <ItemInfo>
           <ItemTitle>{title}</ItemTitle>
-          <ItemDetail>Hosted by: {host.name}</ItemDetail>
+          <ItemDetail style={{ marginTop: '6px' }}>
+            Hosted by: {host.name}
+          </ItemDetail>
           <ItemDetail>{location}</ItemDetail>
           <ItemDetail>{date.toDate().toDateString()}</ItemDetail>
           <ItemDetail>{members.length} attendees</ItemDetail>
@@ -86,6 +121,7 @@ function EventItem({
 
 function Home() {
   const [events, setEvents] = useState<Event[]>([]);
+  const navigate = useNavigate();
   useEffect(() => {
     const getAllEvents = async () => {
       const eventsField = query(
@@ -102,7 +138,19 @@ function Home() {
 
   return (
     <Wrapper>
-      <Cover />
+      <Cover>
+        <div>
+          A Sweet Friendship Refreshes
+          <br /> the Soul.
+        </div>
+        <CreateBtn
+          onClick={() => {
+            navigate('/create', { replace: true });
+          }}
+        >
+          Host Events
+        </CreateBtn>
+      </Cover>
       <Container>
         {events.map((event) => (
           <EventItem

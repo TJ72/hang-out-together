@@ -20,7 +20,7 @@ const Wrapper = styled.nav`
 `;
 
 const Logo = styled.div`
-  font-size: 2.5rem;
+  font-size: 2.3rem;
   font-family: 'Kaushan Script';
   color: #f54545;
 `;

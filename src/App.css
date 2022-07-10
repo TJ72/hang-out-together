@@ -120,16 +120,17 @@ section .form {
 }
 
 .home_container {
+  margin-top: 85px;
   position: relative;
   display: grid;
   grid-template-columns: 1fr 3fr;
   overflow: hidden;
-  height: calc(100vh - 70px);
-  width: 100vw;
+  height: calc(100vh - 85px);
+  width: 100%;
 }
 .users_container {
   margin-top: 10px;
-  border-right: 2px solid var(--color-6);
+  border-right: 2px solid #043957;
   overflow-y: auto;
 }
 .user_wrapper {
@@ -161,7 +162,7 @@ section .form {
   border-radius: 50%;
 }
 .online {
-  background: #34eb52;
+  background: #2be54a;
 }
 .offline {
   background: #777575;
@@ -173,11 +174,12 @@ section .form {
 .messages_user {
   padding: 10px;
   text-align: center;
-  border-bottom: 2px solid var(--color-6);
+  border-bottom: 2px solid #043957;
+  background-color: #f7f7f7;
 }
 .no_conv {
   font-size: 20px;
-  color: var(--color-4);
+  color: #f3a2a2;
   text-align: center;
 }
 .message_form {
@@ -195,15 +197,16 @@ section .form {
   padding: 10px;
   border-radius: 5px;
   outline: none;
-  border: none;
+  box-shadow: 0 0 1px 1px #3f3f3f;
+  letter-spacing: 0.7px;
 }
 .message_form .btn {
   margin-top: -10px;
 }
 .messages {
-  height: calc(100vh - 200px);
+  height: calc(100vh - 215px);
   overflow-y: auto;
-  border-bottom: 1px solid var(--color-6);
+  border-bottom: 2px solid #043957;
 }
 .message_wrapper {
   margin-top: 5px;
@@ -211,14 +214,14 @@ section .form {
 }
 .message_wrapper img {
   width: 100%;
-  border-radius: 5px;
+  border-radius: 8px;
 }
 .message_wrapper p {
   padding: 10px;
   display: inline-block;
   max-width: 50%;
   text-align: left;
-  border-radius: 5px;
+  border-radius: 8px;
 }
 .message_wrapper small {
   display: inline-block;
@@ -229,13 +232,14 @@ section .form {
   text-align: right;
 }
 .me {
+  letter-spacing: 0.7px;
   background: var(--color-3);
   color: white;
 }
 .friend {
-  /* background: var(--color-6); */
-  border: 1px solid var(--color-3);
-  color: var(--color-3);
+  letter-spacing: 0.7px;
+  background: #e4e6eb;
+  color: #050505;
 }
 .selected_user {
   background: var(--color-3);
