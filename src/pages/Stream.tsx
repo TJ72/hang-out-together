@@ -1,14 +1,17 @@
 /* eslint-disable jsx-a11y/media-has-caption */
+// @ts-nocheck
 import React, { useEffect, useRef } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import {
   collection,
   doc,
   getDoc,
+  getDocs,
   setDoc,
   addDoc,
   updateDoc,
+  deleteDoc,
   onSnapshot,
 } from 'firebase/firestore';
 import { db } from '../utils/firebase';
@@ -55,6 +58,7 @@ const pc = new RTCPeerConnection(servers);
 function Stream() {
   let localStream: MediaStream | null = null;
   let remoteStream: MediaStream | null = null;
+  const navigate = useNavigate();
   const { id } = useParams();
   const { search } = useLocation();
   const query = new URLSearchParams(search);
@@ -162,6 +166,45 @@ function Stream() {
     });
   };
 
+  const hangup = async () => {
+    if (id) {
+      const roomRef = doc(db, 'call', id!);
+      await getDocs(collection(roomRef, 'answerCandidates')).then(
+        (querySnapshot) => {
+          querySnapshot.forEach((answerDoc) => {
+            deleteDoc(answerDoc.ref);
+          });
+        },
+      );
+      await getDocs(collection(roomRef, 'offerCandidates')).then(
+        (querySnapshot) => {
+          querySnapshot.forEach((offerDoc) => {
+            deleteDoc(offerDoc.ref);
+          });
+        },
+      );
+      await deleteDoc(roomRef);
+    }
+    localVideo.current
+      .srcObject!.getTracks()
+      .forEach((track: MediaStreamTrack) => {
+        track.stop();
+      });
+    remoteVideo.current
+      .srcObject!.getTracks()
+      .forEach((track: MediaStreamTrack) => {
+        track.stop();
+      });
+
+    localVideo.current!.srcObject = null;
+    remoteVideo.current!.srcObject = null;
+
+    pc.ontrack = null;
+    pc.onicecandidate = null;
+    pc.close();
+    navigate('/messages', { replace: false });
+  };
+
   useEffect(() => {
     if (!query.has('answer')) {
       openWebCam().then(() => createOffer());
@@ -186,7 +229,8 @@ function Stream() {
           ref={remoteVideo}
         />
       </VideoWrapper>
-      <div
+      <button
+        type="button"
         style={{
           width: '56px',
           height: '40px',
@@ -195,10 +239,12 @@ function Stream() {
           justifyContent: 'center',
           backgroundColor: '#f54545',
           borderRadius: '100px',
+          cursor: 'pointer',
         }}
+        onClick={() => hangup()}
       >
         <Hangup />
-      </div>
+      </button>
     </Wrapper>
   );
 }
