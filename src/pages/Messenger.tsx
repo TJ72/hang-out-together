@@ -39,6 +39,7 @@ interface Message {
   text: string;
   media?: string;
   unread: boolean;
+  video?: boolean;
 }
 
 function Messenger() {
@@ -127,20 +128,12 @@ function Messenger() {
     navigate(`/stream/${callDoc.id}`, { replace: false });
 
     await addDoc(collection(db, 'messages', id, 'chat'), {
-      text: `You can join the video chat via the url below:/stream/${callDoc.id}?answer=1`,
+      text: `/stream/${callDoc.id}?answer=1`,
       from: user1,
       to: user2,
       createdAt: Timestamp.fromDate(new Date()),
       media: '',
-    });
-
-    await setDoc(doc(db, 'lastMsg', id), {
-      text,
-      from: user1,
-      to: user2,
-      createdAt: Timestamp.fromDate(new Date()),
-      media: '',
-      unread: true,
+      video: true,
     });
   };
 
@@ -163,6 +156,7 @@ function Messenger() {
             <div className="messages_user">
               <h3
                 style={{
+                  height: '100%',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -170,16 +164,7 @@ function Messenger() {
                 }}
               >
                 {chat.name}
-                {/* <Link
-                  style={{
-                    width: '24px',
-                    height: '24px',
-                  }}
-                  to="/stream"
-                  target="_blank"
-                > */}
                 <VideoChat handleVideoChat={handleVideoChat} />
-                {/* </Link> */}
               </h3>
             </div>
             <div className="messages">

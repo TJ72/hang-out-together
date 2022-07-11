@@ -11,6 +11,11 @@
   --color-6: #333;
 }
 
+br {
+  content: '';
+  margin-top: 10px;
+}
+
 /* Navbar */
 /* nav { */
 /* display: flex; */
@@ -130,7 +135,7 @@ section .form {
 }
 .users_container {
   margin-top: 10px;
-  border-right: 2px solid #043957;
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
   overflow-y: auto;
 }
 .user_wrapper {
@@ -170,11 +175,12 @@ section .form {
 .messages_container {
   position: relative;
   width: 100%;
+  margin-top: 10px;
 }
 .messages_user {
-  padding: 10px;
+  padding: 5px 10px 5px;
   text-align: center;
-  border-bottom: 2px solid #043957;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   background-color: #f7f7f7;
 }
 .no_conv {
@@ -195,18 +201,22 @@ section .form {
   width: 40vw;
   margin: 0px 10px 10px;
   padding: 10px;
-  border-radius: 5px;
+  border-radius: 15px;
   outline: none;
-  box-shadow: 0 0 1px 1px #3f3f3f;
+  background-color: #f0f2f5;
+  border: 0;
+  font-size: 0.9375rem;
   letter-spacing: 0.7px;
 }
 .message_form .btn {
   margin-top: -10px;
+  margin-left: 4px;
+  border-radius: 10px;
 }
 .messages {
   height: calc(100vh - 215px);
   overflow-y: auto;
-  border-bottom: 2px solid #043957;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 .message_wrapper {
   margin-top: 5px;
