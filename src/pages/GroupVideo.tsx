@@ -14,7 +14,7 @@ import {
   onValue,
 } from 'firebase/database';
 import { rtcFireSession } from '../utils/rtcfire';
-import { database } from '../utils/firebase';
+import { database, auth } from '../utils/firebase';
 
 const Wrapper = styled.div`
   display: flex;
@@ -60,7 +60,6 @@ function GroupVideo() {
         parent!.removeChild(existing);
       }
     }
-
     // zero state
     const zero = participants.size === 0;
     // document.querySelector('#peers-header')!.style.display = zero

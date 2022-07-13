@@ -32,11 +32,17 @@ function Text({ msg, user1 }: { msg: Message; user1: string }) {
             to={msg.text}
             style={{ display: 'flex', textDecoration: 'none' }}
           >
-            <Phone /> <span style={{ marginLeft: '8px' }}>Join</span>
+            <Phone />{' '}
+            <span
+              className={msg.from === user1 ? 'me' : 'friend'}
+              style={{ marginLeft: '8px' }}
+            >
+              Join
+            </span>
           </Link>
         )}
         <br />
-        <small>
+        <small style={{ marginTop: '0' }}>
           <Moment fromNow>{msg.createdAt.toDate()}</Moment>
         </small>
       </p>

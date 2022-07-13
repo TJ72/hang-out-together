@@ -19,6 +19,7 @@ import ChatRoom from '../components/ChatRoom';
 import MessageForm from '../components/MessageForm';
 import Text from '../components/Text';
 import VideoChat from '../components/svg/VideoChat';
+import Remove from '../components/svg/Remove';
 
 interface User {
   createdAt: Date;
@@ -47,9 +48,19 @@ function Messenger() {
   const [chat, setChat] = useState<User>();
   const [text, setText] = useState('');
   const [img, setImg] = useState<File>();
+  const [localPath, setLocalPath] = useState('');
   const [msgs, setMsgs] = useState<Message[]>([]);
   const navigate = useNavigate();
   const user1 = auth.currentUser?.uid;
+
+  useEffect(() => {
+    if (img) {
+      const path = (window.URL || window.webkitURL).createObjectURL(img);
+      setLocalPath(path);
+    } else {
+      setLocalPath('');
+    }
+  }, [img]);
 
   useEffect(() => {
     const usersRef = collection(db, 'users');
@@ -117,6 +128,7 @@ function Messenger() {
       media: url || '',
       unread: true,
     });
+
     setText('');
     setImg(undefined);
   };
@@ -135,6 +147,11 @@ function Messenger() {
       media: '',
       video: true,
     });
+  };
+
+  const removeUploadImage = () => {
+    setImg(undefined);
+    setLocalPath('');
   };
 
   return (
@@ -175,6 +192,33 @@ function Messenger() {
                   ))
                 : null}
             </div>
+            {localPath && (
+              <div
+                style={{
+                  width: '64px',
+                  height: '64px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  position: 'absolute',
+                  left: '17%',
+                  bottom: '-1%',
+                  backgroundColor: 'rgb(237 230 230 / 53%)',
+                  zIndex: '150',
+                }}
+              >
+                <Remove removeUploadImage={removeUploadImage} />
+                <img
+                  src={localPath}
+                  alt="uploaded"
+                  style={{
+                    maxWidth: '100%',
+                    maxHeight: '100%',
+                    objectFit: 'contain',
+                  }}
+                />
+              </div>
+            )}
             <MessageForm
               handleSubmit={handleSubmit}
               text={text}

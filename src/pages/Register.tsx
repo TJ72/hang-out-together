@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import styled from 'styled-components';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { setDoc, doc, Timestamp } from 'firebase/firestore';
 import { auth, db } from '../utils/firebase';
+import RegisterCover from '../assets/regiser.jpg';
 
 interface Data {
   name: string;
@@ -10,6 +13,66 @@ interface Data {
   error: null | string;
   loading: boolean;
 }
+
+const Wrapper = styled.div`
+  margin-top: 85px;
+  width: 100%;
+  height: calc(100vh - 85px);
+  display: flex;
+  justify-content: space-between;
+`;
+
+const RegisterForm = styled.div`
+  width: 40%;
+  margin-top: 8%;
+  margin-left: 20%;
+`;
+
+const Banner = styled.div`
+  width: 35%;
+  height: 100%;
+  background: url(${RegisterCover}) no-repeat center center;
+  background-size: cover;
+  background-position: 50%;
+  opacity: 0.7;
+`;
+
+const InputContainer = styled.div`
+  margin-top: 20px;
+  div {
+    font-size: 1.17rem;
+    font-weight: 550;
+  }
+  input {
+    width: 60%;
+    height: 28px;
+    padding-left: 6px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border: none;
+    outline: 0 !important;
+    background-color: #f0f2f5;
+    border-radius: 10px;
+    font-size: 1rem;
+    letter-spacing: 0.7px;
+  }
+`;
+
+const RegisterBtn = styled.button`
+  width: 150px;
+  height: 50px;
+  margin-top: 15px;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  font-weight: 550;
+  color: #fff;
+  background-color: #f54545;
+  border-radius: 10px;
+  &:hover {
+    background-color: #e33b3b;
+  }
+`;
 
 function Register() {
   const [data, setData] = useState<Data>({
@@ -58,10 +121,18 @@ function Register() {
     }
   };
   return (
-    <section>
-      <h3>Create An Account</h3>
-      <div>
-        <div className="input_container">
+    <Wrapper>
+      <RegisterForm>
+        <h2 style={{ letterSpacing: '0.6px' }}>Sign up</h2>
+        <h3>
+          Already a member?{' '}
+          <span>
+            <Link style={{ color: 'rgb(0 130 148)' }} to="/login">
+              Log in
+            </Link>
+          </span>
+        </h3>
+        <InputContainer>
           <div>Name</div>
           <input type="text" name="name" value={name} onChange={handleChange} />
           <div>Email</div>
@@ -78,13 +149,14 @@ function Register() {
             value={password}
             onChange={handleChange}
           />
-        </div>
-        <button type="button" onClick={handleSubmit}>
+        </InputContainer>
+        <RegisterBtn type="button" onClick={handleSubmit}>
           {loading ? 'Creating ...' : 'Register'}
-        </button>
+        </RegisterBtn>
         {error && <p>{error}</p>}
-      </div>
-    </section>
+      </RegisterForm>
+      <Banner />
+    </Wrapper>
   );
 }
 

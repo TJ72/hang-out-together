@@ -4,11 +4,11 @@ function Phone() {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      style={{ width: '28px', height: '28px' }}
+      style={{ width: '24px', height: '24px' }}
       className="h-6 w-6"
-      fill="#549c0e"
+      fill="#6cba20"
       viewBox="0 0 24 24"
-      stroke="#549c0e"
+      stroke="#6cba20"
       strokeWidth="2"
     >
       <path
