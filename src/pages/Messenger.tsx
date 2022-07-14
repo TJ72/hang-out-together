@@ -49,6 +49,7 @@ function Messenger() {
   const [text, setText] = useState('');
   const [img, setImg] = useState<File>();
   const [localPath, setLocalPath] = useState('');
+  const [loading, setLoading] = useState(false);
   const [msgs, setMsgs] = useState<Message[]>([]);
   const navigate = useNavigate();
   const user1 = auth.currentUser?.uid;
@@ -131,6 +132,7 @@ function Messenger() {
 
     setText('');
     setImg(undefined);
+    setLoading(false);
   };
 
   const handleVideoChat = async () => {
@@ -223,8 +225,10 @@ function Messenger() {
               handleSubmit={handleSubmit}
               text={text}
               img={img}
+              loading={loading}
               setText={setText}
               setImg={setImg}
+              setLoading={setLoading}
             />
           </>
         ) : (

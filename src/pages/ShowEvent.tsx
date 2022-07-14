@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState, useContext } from 'react';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 import {
   collection,
+  doc,
+  getDoc,
   getDocs,
   orderBy,
   query,
@@ -238,6 +241,7 @@ function EventComment({ name, avatar, content, createdAt }: CommentProps) {
   );
 }
 
+const ONLINE_CONSTRAINT = 1;
 function ShowEvent() {
   const { id } = useParams();
   const [event, setEvent] = useState<Event | null>(null);
@@ -299,6 +303,17 @@ function ShowEvent() {
     return newMembers;
   }
 
+  const checkOnlineConstraint = async () => {
+    const eventData = (await getDoc(doc(db, 'events', id))).data();
+    if (attend) return true;
+    if (eventData!.members.length >= ONLINE_CONSTRAINT) {
+      // eslint-disable-next-line no-alert
+      alert('活動人數已達上限！');
+      return false;
+    }
+    return true;
+  };
+
   return (
     <Wrapper>
       <Container>
@@ -311,10 +326,22 @@ function ShowEvent() {
               alert('請先登入！');
               return;
             }
-            const newMembers = toggleAttend();
-            updateEventMembers(event.id!, { members: newMembers });
-            setMembers(newMembers);
-            toggleUserJoins(event.id!);
+
+            if (event.type === 'Online') {
+              checkOnlineConstraint().then((canToggle) => {
+                if (!canToggle) return null;
+                const newMembers = toggleAttend();
+                updateEventMembers(event.id!, { members: newMembers });
+                setMembers(newMembers);
+                toggleUserJoins(event.id!);
+                return null;
+              });
+            } else {
+              const newMembers = toggleAttend();
+              updateEventMembers(event.id!, { members: newMembers });
+              setMembers(newMembers);
+              toggleUserJoins(event.id!);
+            }
           }}
         >
           {attend ? 'Cancel' : 'Attend'}

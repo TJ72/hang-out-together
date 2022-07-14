@@ -4,13 +4,23 @@ import Attachment from './svg/Attachment';
 type FormProps = {
   handleSubmit: Function;
   text: string;
+  loading: boolean;
   img: File | undefined;
   setText: Function;
   setImg: Function;
+  setLoading: Function;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function MessageForm({ handleSubmit, text, setText, img, setImg }: FormProps) {
+function MessageForm({
+  handleSubmit,
+  text,
+  setText,
+  img,
+  setImg,
+  loading,
+  setLoading,
+}: FormProps) {
   return (
     <form className="message_form" onSubmit={(e) => handleSubmit(e)}>
       <label htmlFor="img">
@@ -34,6 +44,8 @@ function MessageForm({ handleSubmit, text, setText, img, setImg }: FormProps) {
             if (e.key === 'Enter') {
               e.preventDefault();
               if (!text && !img) return;
+              if (loading) return;
+              setLoading(true);
               handleSubmit(e);
             }
           }}
@@ -45,6 +57,8 @@ function MessageForm({ handleSubmit, text, setText, img, setImg }: FormProps) {
           className="btn"
           onClick={(e) => {
             if (!text && !img) return;
+            if (loading) return;
+            setLoading(true);
             handleSubmit(e);
           }}
         >

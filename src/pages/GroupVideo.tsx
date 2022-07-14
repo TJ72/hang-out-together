@@ -1,8 +1,6 @@
-/* eslint-disable no-restricted-syntax */
 /* eslint-disable jsx-a11y/media-has-caption */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-// @ts-nocheck
-import React, { useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import {
@@ -14,7 +12,13 @@ import {
   onValue,
 } from 'firebase/database';
 import { rtcFireSession } from '../utils/rtcfire';
-import { database, auth } from '../utils/firebase';
+import { database, auth, getEventDoc } from '../utils/firebase';
+import type { Event } from '../types/event';
+
+interface IVideoStreams {
+  [key: string]: MediaStream;
+  pid: MediaStream;
+}
 
 const Wrapper = styled.div`
   display: flex;
@@ -22,93 +26,83 @@ const Wrapper = styled.div`
   align-items: center;
 `;
 
-// function Video({ videoStream }) {
-//   const videoRef = useRef<HTMLVideoElement>(null);
-//   videoRef.current!.srcObject = videoStream;
-//   return <video autoPlay playsInline ref={videoRef} />;
-// }
+function Video({ videoStream }: { videoStream: MediaStream }) {
+  const refVideo = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (!refVideo.current) return;
+    refVideo.current.srcObject = videoStream;
+  }, [videoStream]);
+
+  return <video ref={refVideo} autoPlay playsInline />;
+}
+
+// const myId = String(Math.floor(Math.random() * 9999));
+
 function GroupVideo() {
-  const myId = String(Math.floor(Math.random() * 9999));
+  const myId = auth.currentUser?.uid;
+  const [peersStreams, setPeersStream] = useState<
+    { pid: string; video: MediaStream }[]
+  >([]);
+  const [event, setEvent] = useState<Event>();
   const { topic } = useParams();
-  // const localVideo = useRef<HTMLVideoElement>(null);
 
-  interface IVideoStreams {
-    pid: MediaStream;
-  }
-  function updatePeers(participants: string[], videoStreams: IVideoStreams) {
-    // eslint-disable-next-line no-param-reassign
-    participants = new Set(participants.filter((pid: string) => pid !== myId));
-    const parent = document.querySelector('#peers');
+  useEffect(() => {
+    getEventDoc(topic!).then((res) => setEvent(res));
+  }, []);
 
-    // new and existing peers
-    for (const pid of participants) {
-      let node = parent!.querySelector(`div[data-pid="${pid}"]`);
-      if (!node) {
-        node = document.createElement('div');
-        node.setAttribute('data-pid', pid);
-        node.innerHTML = '<video autoplay playsinline>';
-        parent!.appendChild(node);
-      }
-
-      const video = node.querySelector('video');
-      video!.srcObject = videoStreams[pid];
+  useEffect(() => {
+    function updatePeers(participants: string[], videoStreams: IVideoStreams) {
+      setPeersStream(
+        participants
+          .filter((pid: string) => pid !== myId)
+          .map((pid) => ({
+            pid,
+            video: videoStreams[pid],
+          })),
+      );
     }
+    function setupVideo() {
+      if (!myId) return;
+      const participantsRef = ref(database, `${topic}/participants`);
+      const videoStreams: any = {};
 
-    // removed peers
-    for (const existing of parent.querySelectorAll('div')) {
-      if (!participants.has(existing.getAttribute('data-pid'))) {
-        parent!.removeChild(existing);
-      }
+      const meRef = child(participantsRef, myId);
+      update(meRef, { joined: true });
+      onDisconnect(meRef).set(null);
+
+      const rtcSession = rtcFireSession({
+        myId,
+        negotiationRef: ref(database, `${topic}/participants`),
+        onMyStream: (stream) => {
+          const video: HTMLVideoElement = document.querySelector(
+            '#my-video',
+          ) as HTMLVideoElement;
+          video.srcObject = stream;
+        },
+        onParticipantStream: (pid, stream) => {
+          videoStreams[pid] = stream;
+          updatePeers(rtcSession.participants, videoStreams);
+        },
+      });
+
+      onValue(participantsRef, (snap: DataSnapshot) => {
+        const participants = Object.keys(snap.val() || {});
+        rtcSession.participants = participants;
+        updatePeers(participants, videoStreams);
+      });
     }
-    // zero state
-    const zero = participants.size === 0;
-    // document.querySelector('#peers-header')!.style.display = zero
-    //   ? 'none'
-    //   : 'block';
-    document.querySelector('#zero-state').style.display = zero
-      ? 'block'
-      : 'none';
-  }
-
-  function setupVideo() {
-    const participantsRef = ref(database, `${topic}/participants`);
-    const videoStreams: any = {};
-
-    const meRef = child(participantsRef, myId);
-    update(meRef, { joined: true });
-    onDisconnect(meRef).set(null);
-
-    const rtcSession = rtcFireSession({
-      myId,
-      negotiationRef: ref(database, `${topic}/participants`),
-      onMyStream: (stream) => {
-        const video: HTMLVideoElement = document.querySelector(
-          '#my-video',
-        ) as HTMLVideoElement;
-        video.srcObject = stream;
-      },
-      onParticipantStream: (pid, stream) => {
-        videoStreams[pid] = stream;
-        updatePeers(rtcSession.participants, videoStreams);
-      },
-    });
-
-    onValue(participantsRef, (snap: DataSnapshot) => {
-      const participants = Object.keys(snap.val() || {});
-      rtcSession.participants = participants;
-      updatePeers(participants, videoStreams);
-    });
-  }
-  setupVideo();
+    setupVideo();
+  }, [myId]);
 
   return (
     <Wrapper>
       <h1>Multi Peers Video Chat</h1>
       <div id="peers">
         <video id="my-video" muted autoPlay playsInline />
-      </div>
-      <div id="zero-state">
-        Share the URL with a friend, or open it in another tab!
+        {peersStreams.map((stream: { pid: string; video: MediaStream }) => (
+          <Video key={stream.pid} videoStream={stream.video} />
+        ))}
       </div>
     </Wrapper>
   );
