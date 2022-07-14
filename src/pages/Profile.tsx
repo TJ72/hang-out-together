@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
 import {
   getDownloadURL,
   uploadBytes,
@@ -10,18 +11,23 @@ import Camera from '../components/svg/Camera';
 import Delete from '../components/svg/Delete';
 import Img from '../assets/avatar.png';
 import { storage, db, auth } from '../utils/firebase';
+import type { IJoin } from '../utils/toggleUserJoins';
 
 interface User {
   createdAt: Timestamp;
   email: string;
   follows: string[];
   isOnline: boolean;
-  joins: string[];
+  joins: IJoin[];
   name: string;
   uid: string;
   avatar?: string;
   avatarPath?: string;
 }
+
+const Wrapper = styled.div`
+  margin-top: 85px;
+`;
 
 function Profile() {
   const [img, setImg] = useState<File>();
@@ -70,34 +76,43 @@ function Profile() {
     }
   };
   return (
-    <section>
-      <div className="profile_container">
-        <div className="img_container">
-          <img src={user?.avatar || Img} alt="Avatar" />
-          <div className="overlay">
-            <div>
-              <label htmlFor="photo">
-                <Camera />
-                <input
-                  type="file"
-                  accept="image/*"
-                  style={{ display: 'none' }}
-                  id="photo"
-                  onChange={(e) => setImg(e.target.files![0])}
-                />
-              </label>
-              {user?.avatar ? <Delete deleteImage={deleteImage} /> : null}
+    <Wrapper>
+      <section>
+        <div className="profile_container">
+          <div className="img_container">
+            <img src={user?.avatar || Img} alt="Avatar" />
+            <div className="overlay">
+              <div>
+                <label htmlFor="photo">
+                  <Camera />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    id="photo"
+                    onChange={(e) => setImg(e.target.files![0])}
+                  />
+                </label>
+                {user?.avatar ? <Delete deleteImage={deleteImage} /> : null}
+              </div>
             </div>
           </div>
+          <div className="text_container">
+            <h3>{user?.name}</h3>
+            <p>{user?.email}</p>
+            <hr />
+            <small>Joined on: {user?.createdAt.toDate().toDateString()}</small>
+          </div>
         </div>
-        <div className="text_container">
-          <h3>{user?.name}</h3>
-          <p>{user?.email}</p>
-          <hr />
-          <small>Joined on: {user?.createdAt.toDate().toDateString()}</small>
-        </div>
-      </div>
-    </section>
+      </section>
+      {user?.joins.map((join) => (
+        <>
+          <div>{join.title}</div>
+          <div>{join.date.toDate().toDateString()}</div>
+          {join.type === 'Online' && <div>url: /group-video/{join.id}</div>}
+        </>
+      ))}
+    </Wrapper>
   );
 }
 

@@ -75,7 +75,17 @@ export async function getUserInfo(uid: string) {
 
 export async function updateUserJoins(
   uid: string,
-  data: (string | undefined)[],
+  data: (
+    | {
+        id: string;
+        title: string;
+        date: Timestamp;
+        mainImageUrl: string;
+        type: string;
+        host: IUser;
+      }
+    | undefined
+  )[],
 ) {
   const userRef = doc(db, 'users', uid);
   await updateDoc(userRef, { joins: data });
@@ -83,7 +93,17 @@ export async function updateUserJoins(
 
 export async function updateUserFollows(
   uid: string,
-  data: (string | undefined)[],
+  data: (
+    | {
+        id: string;
+        title: string;
+        date: Timestamp;
+        mainImageUrl: string;
+        type: string;
+        host: string;
+      }
+    | undefined
+  )[],
 ) {
   const userRef = doc(db, 'users', uid);
   await updateDoc(userRef, { follows: data });

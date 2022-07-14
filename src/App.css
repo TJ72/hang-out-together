@@ -268,22 +268,6 @@ section .form {
 .sm_screen {
   display: none;
 }
-#peers {
-  width: 90%;
-  min-height: 80vh;
-  margin-top: 40px;
-  padding: 60px 40px;
-  display: flex;
-  justify-content: space-around;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  background-color: #3f3f3f;
-  object-fit: cover;
-}
-#peers video {
-  width: 400px;
-  height: 300px;
-}
 
 input[type='radio']::before {
   content: '';

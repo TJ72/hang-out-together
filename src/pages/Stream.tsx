@@ -240,6 +240,7 @@ function Stream() {
           backgroundColor: '#f54545',
           borderRadius: '100px',
           cursor: 'pointer',
+          border: 'none',
         }}
         onClick={() => hangup()}
       >

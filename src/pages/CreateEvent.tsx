@@ -166,6 +166,9 @@ function CreateEvent() {
     navigate(`/event/${eventRef.id}`, { replace: true });
   };
 
+  const handleColor = (time) =>
+    time.getHours() > 12 ? 'text-success' : 'text-error';
+
   return (
     <Wrapper>
       <Background backgroundImage={type} />
@@ -224,8 +227,10 @@ function CreateEvent() {
       <Title>Event Date</Title>
       <StyledDatePicker
         // className="date-picker"
+        showTimeSelect
         selected={date}
         onChange={(selectedDate: Date) => setDate(selectedDate)}
+        timeClassName={handleColor}
       />
       <Title>Main Image</Title>
       <ImageContainer htmlFor="photo">

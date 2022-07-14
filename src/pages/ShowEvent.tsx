@@ -22,7 +22,6 @@ import {
 import { AuthContext } from '../context/auth';
 import type { Event } from '../types/event';
 import toggleUserJoins from '../utils/toggleUserJoins';
-// import toggleUserFollows from '../utils/toggleUserFollows';
 import Avatar from '../assets/avatar.png';
 import Time from '../components/svg/Time';
 import Location from '../components/svg/Location';
@@ -241,7 +240,7 @@ function EventComment({ name, avatar, content, createdAt }: CommentProps) {
   );
 }
 
-const ONLINE_CONSTRAINT = 1;
+const ONLINE_CONSTRAINT = 4;
 function ShowEvent() {
   const { id } = useParams();
   const [event, setEvent] = useState<Event | null>(null);
@@ -333,14 +332,28 @@ function ShowEvent() {
                 const newMembers = toggleAttend();
                 updateEventMembers(event.id!, { members: newMembers });
                 setMembers(newMembers);
-                toggleUserJoins(event.id!);
+                toggleUserJoins({
+                  id: event.id!,
+                  title: event.title,
+                  date: event.date,
+                  mainImageUrl: event.mainImageUrl,
+                  type: event.type,
+                  host: event.host!,
+                });
                 return null;
               });
             } else {
               const newMembers = toggleAttend();
               updateEventMembers(event.id!, { members: newMembers });
               setMembers(newMembers);
-              toggleUserJoins(event.id!);
+              toggleUserJoins({
+                id: event.id!,
+                title: event.title,
+                date: event.date,
+                mainImageUrl: event.mainImageUrl,
+                type: event.type,
+                host: event.host!,
+              });
             }
           }}
         >
