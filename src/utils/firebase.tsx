@@ -11,10 +11,12 @@ import {
   updateDoc,
   query,
   where,
+  Timestamp,
 } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import type { Event } from '../types/event';
 import type { Room } from '../types/room';
+import { IUser } from '../types/user';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -33,12 +35,12 @@ export const storage = getStorage(app);
 export const auth = getAuth(app);
 export const database = getDatabase(app);
 
-interface Comment {
+export interface Comment {
   eventId: string;
-  author: string;
+  author: IUser;
   content: string;
-  createdAt: Date;
-  updatedAt?: Date;
+  createdAt: Timestamp;
+  id?: string;
 }
 
 export async function getEventDoc(docId: string) {
@@ -54,7 +56,7 @@ export async function setEventDoc(data: Event) {
 
 export async function updateEventMembers(
   docId: string,
-  data: { members: Array<string> },
+  data: { members: Array<IUser | null> },
 ) {
   const docRef = doc(db, 'events', docId);
   await updateDoc(docRef, data);
@@ -62,7 +64,7 @@ export async function updateEventMembers(
 
 export async function setCommentDoc(data: Comment) {
   const commentRef = doc(collection(db, 'comments'));
-  await setDoc(commentRef, data);
+  await setDoc(commentRef, { ...data, id: commentRef.id });
 }
 
 export async function getUserInfo(uid: string) {
@@ -73,7 +75,17 @@ export async function getUserInfo(uid: string) {
 
 export async function updateUserJoins(
   uid: string,
-  data: (string | undefined)[],
+  data: (
+    | {
+        id: string;
+        title: string;
+        date: Timestamp;
+        mainImageUrl: string;
+        type: string;
+        host: IUser;
+      }
+    | undefined
+  )[],
 ) {
   const userRef = doc(db, 'users', uid);
   await updateDoc(userRef, { joins: data });
@@ -81,7 +93,17 @@ export async function updateUserJoins(
 
 export async function updateUserFollows(
   uid: string,
-  data: (string | undefined)[],
+  data: (
+    | {
+        id: string;
+        title: string;
+        date: Timestamp;
+        mainImageUrl: string;
+        type: string;
+        host: string;
+      }
+    | undefined
+  )[],
 ) {
   const userRef = doc(db, 'users', uid);
   await updateDoc(userRef, { follows: data });

@@ -1,6 +1,6 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import React, { useState, useEffect, useContext } from 'react';
+import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Home from './pages/Home';
 import CreateEvent from './pages/CreateEvent';
 import ShowEvent from './pages/ShowEvent';
 import Register from './pages/Register';
@@ -20,15 +20,15 @@ function App() {
         <BrowserRouter>
           <Navbar />
           <Routes>
-            <Route path="/" element={<div>Home</div>} />
+            <Route path="/" element={<Home />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/messages" element={<Messenger />} />
             <Route path="/create" element={<CreateEvent />} />
             <Route path="/event/:id" element={<ShowEvent />} />
-            <Route path="/stream" element={<Stream />} />
-            <Route path="/video/:topic" element={<GroupVideo />} />
+            <Route path="/stream/:id" element={<Stream />} />
+            <Route path="/group-video/:topic" element={<GroupVideo />} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>

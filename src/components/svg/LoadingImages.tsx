@@ -7,8 +7,8 @@ function LoadingImages() {
       id="Layer_1"
       xmlns="http://www.w3.org/2000/svg"
       style={{
-        width: '95px',
-        height: '95px',
+        width: '75px',
+        height: '75px',
         cursor: 'pointer',
         color: '#f24957',
         fill: 'rgb(170, 170, 170)',

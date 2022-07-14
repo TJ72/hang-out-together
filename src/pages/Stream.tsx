@@ -1,15 +1,49 @@
 /* eslint-disable jsx-a11y/media-has-caption */
-import React, { useState, useRef } from 'react';
+// @ts-nocheck
+import React, { useEffect, useRef } from 'react';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import styled from 'styled-components';
 import {
   collection,
   doc,
   getDoc,
+  getDocs,
   setDoc,
   addDoc,
   updateDoc,
+  deleteDoc,
   onSnapshot,
 } from 'firebase/firestore';
 import { db } from '../utils/firebase';
+import Hangup from '../components/svg/Hangup';
+
+const Wrapper = styled.div`
+  width: 100%;
+  height: calc(100vh - 85px);
+  background-color: #212020;
+  margin-top: 85px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
+const VideoWrapper = styled.div`
+  margin-top: 40px;
+  margin-bottom: 30px;
+  display: flex;
+  gap: 5%;
+  align-items: center;
+  justify-content: center;
+`;
+
+const VideoContainer = styled.video`
+  width: 40vw;
+  height: 30vw;
+  background: #666161;
+  border-radius: 15px;
+  border: 1px solid #c2bcbc;
+`;
 
 const servers = {
   iceServers: [
@@ -24,11 +58,14 @@ const pc = new RTCPeerConnection(servers);
 function Stream() {
   let localStream: MediaStream | null = null;
   let remoteStream: MediaStream | null = null;
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const { search } = useLocation();
+  const query = new URLSearchParams(search);
 
   // Control Elements by DOM
   const localVideo = useRef<HTMLVideoElement>(null);
   const remoteVideo = useRef<HTMLVideoElement>(null);
-  const [callId, setCallId] = useState('');
 
   const openWebCam = async () => {
     localStream = await navigator.mediaDevices.getUserMedia({
@@ -54,20 +91,10 @@ function Stream() {
 
   // Create an offer
   const createOffer = async () => {
-    const callDoc = doc(collection(db, 'calls'));
-    const offerCandidates = collection(
-      db,
-      'calls',
-      callDoc.id,
-      'offerCandidates',
-    );
-    const answerCandidates = collection(
-      db,
-      'calls',
-      callDoc.id,
-      'answerCandidates',
-    );
-    setCallId(callDoc.id);
+    const callDoc = doc(db, 'calls', id!);
+    const offerCandidates = collection(db, 'calls', id!, 'offerCandidates');
+    const answerCandidates = collection(db, 'calls', id!, 'answerCandidates');
+    // setCallId(callDoc.id);
 
     // Get candidates for caller, save to db
     pc.onicecandidate = (event) => {
@@ -105,7 +132,7 @@ function Stream() {
   };
 
   const answerCall = async () => {
-    const callDoc = doc(db, 'calls', callId);
+    const callDoc = doc(db, 'calls', id!);
     const offerCandidates = collection(callDoc, 'offerCandidates');
     const answerCandidates = collection(callDoc, 'answerCandidates');
 
@@ -139,71 +166,87 @@ function Stream() {
     });
   };
 
+  const hangup = async () => {
+    if (id) {
+      const roomRef = doc(db, 'call', id!);
+      await getDocs(collection(roomRef, 'answerCandidates')).then(
+        (querySnapshot) => {
+          querySnapshot.forEach((answerDoc) => {
+            deleteDoc(answerDoc.ref);
+          });
+        },
+      );
+      await getDocs(collection(roomRef, 'offerCandidates')).then(
+        (querySnapshot) => {
+          querySnapshot.forEach((offerDoc) => {
+            deleteDoc(offerDoc.ref);
+          });
+        },
+      );
+      await deleteDoc(roomRef);
+    }
+    localVideo.current
+      .srcObject!.getTracks()
+      .forEach((track: MediaStreamTrack) => {
+        track.stop();
+      });
+    remoteVideo.current
+      .srcObject!.getTracks()
+      .forEach((track: MediaStreamTrack) => {
+        track.stop();
+      });
+
+    localVideo.current!.srcObject = null;
+    remoteVideo.current!.srcObject = null;
+
+    pc.ontrack = null;
+    pc.onicecandidate = null;
+    pc.close();
+    navigate('/messages', { replace: false });
+  };
+
+  useEffect(() => {
+    if (!query.has('answer')) {
+      openWebCam().then(() => createOffer());
+    } else {
+      openWebCam().then(() => answerCall());
+    }
+  }, []);
+
   return (
-    <>
-      <h2>1. Start your Webcam</h2>
-      <div
+    <Wrapper>
+      <VideoWrapper>
+        <VideoContainer
+          id="webcamVideo"
+          autoPlay
+          playsInline
+          ref={localVideo}
+        />
+        <VideoContainer
+          id="remoteVideo"
+          autoPlay
+          playsInline
+          ref={remoteVideo}
+        />
+      </VideoWrapper>
+      <button
+        type="button"
         style={{
+          width: '56px',
+          height: '40px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          backgroundColor: '#f54545',
+          borderRadius: '100px',
+          cursor: 'pointer',
+          border: 'none',
         }}
+        onClick={() => hangup()}
       >
-        <span>
-          <h3>Local Stream</h3>
-          <video
-            style={{
-              width: '40vw',
-              height: '30vw',
-              margin: '2rem',
-              background: '#2c3e50',
-            }}
-            id="webcamVideo"
-            autoPlay
-            playsInline
-            ref={localVideo}
-          />
-        </span>
-        <span>
-          <h3>Remote Stream</h3>
-          <video
-            style={{
-              width: '40vw',
-              height: '30vw',
-              margin: '2rem',
-              background: '#2c3e50',
-            }}
-            id="remoteVideo"
-            autoPlay
-            playsInline
-            ref={remoteVideo}
-          />
-        </span>
-      </div>
-      <button type="button" id="webcamButton" onClick={openWebCam}>
-        Start webcam
+        <Hangup />
       </button>
-      <h2>2. Create a new Call</h2>
-      <button type="button" id="callButton" onClick={createOffer}>
-        Create Call (offer)
-      </button>
-      <h2>3. Join a Call</h2>
-      <p>Answer the call from a different browser window or device</p>
-
-      <input
-        id="callInput"
-        value={callId}
-        onChange={(e) => setCallId(e.target.value)}
-      />
-      <button type="button" id="answerButton" onClick={answerCall}>
-        Answer
-      </button>
-      <h2>4. Hangup</h2>
-
-      <button type="button" id="hangupButton">
-        Hangup
-      </button>
-    </>
+    </Wrapper>
   );
 }
 

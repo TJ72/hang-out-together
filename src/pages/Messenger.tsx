@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   collection,
   query,
@@ -17,6 +18,8 @@ import { db, auth, storage } from '../utils/firebase';
 import ChatRoom from '../components/ChatRoom';
 import MessageForm from '../components/MessageForm';
 import Text from '../components/Text';
+import VideoChat from '../components/svg/VideoChat';
+import Remove from '../components/svg/Remove';
 
 interface User {
   createdAt: Date;
@@ -37,6 +40,7 @@ interface Message {
   text: string;
   media?: string;
   unread: boolean;
+  video?: boolean;
 }
 
 function Messenger() {
@@ -44,22 +48,34 @@ function Messenger() {
   const [chat, setChat] = useState<User>();
   const [text, setText] = useState('');
   const [img, setImg] = useState<File>();
+  const [localPath, setLocalPath] = useState('');
+  const [loading, setLoading] = useState(false);
   const [msgs, setMsgs] = useState<Message[]>([]);
+  const navigate = useNavigate();
   const user1 = auth.currentUser?.uid;
+
+  useEffect(() => {
+    if (img) {
+      const path = (window.URL || window.webkitURL).createObjectURL(img);
+      setLocalPath(path);
+    } else {
+      setLocalPath('');
+    }
+  }, [img]);
 
   useEffect(() => {
     const usersRef = collection(db, 'users');
     // create query object
     const q = query(usersRef, where('uid', 'not-in', [user1]));
     // execute query
-    const unsub = onSnapshot(q, (querySnapshot) => {
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const currentUsers = [] as User[];
       querySnapshot.forEach((userDoc) => {
         currentUsers.push(userDoc.data() as User);
       });
       setUsers(currentUsers);
     });
-    return () => unsub();
+    return () => unsubscribe();
   }, []);
 
   const selectUser = async (user: User) => {
@@ -116,6 +132,28 @@ function Messenger() {
 
     setText('');
     setImg(undefined);
+    setLoading(false);
+  };
+
+  const handleVideoChat = async () => {
+    const user2 = chat?.uid;
+    const id = user1! > user2! ? `${user1! + user2!}` : `${user2! + user1!}`;
+    const callDoc = doc(collection(db, 'calls'));
+    navigate(`/stream/${callDoc.id}`, { replace: false });
+
+    await addDoc(collection(db, 'messages', id, 'chat'), {
+      text: `/stream/${callDoc.id}?answer=1`,
+      from: user1,
+      to: user2,
+      createdAt: Timestamp.fromDate(new Date()),
+      media: '',
+      video: true,
+    });
+  };
+
+  const removeUploadImage = () => {
+    setImg(undefined);
+    setLocalPath('');
   };
 
   return (
@@ -135,7 +173,18 @@ function Messenger() {
         {chat ? (
           <>
             <div className="messages_user">
-              <h3>{chat.name}</h3>
+              <h3
+                style={{
+                  height: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '15px',
+                }}
+              >
+                {chat.name}
+                <VideoChat handleVideoChat={handleVideoChat} />
+              </h3>
             </div>
             <div className="messages">
               {msgs.length
@@ -145,16 +194,45 @@ function Messenger() {
                   ))
                 : null}
             </div>
+            {localPath && (
+              <div
+                style={{
+                  width: '64px',
+                  height: '64px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  position: 'absolute',
+                  left: '17%',
+                  bottom: '-1%',
+                  backgroundColor: 'rgb(237 230 230 / 53%)',
+                  zIndex: '150',
+                }}
+              >
+                <Remove removeUploadImage={removeUploadImage} />
+                <img
+                  src={localPath}
+                  alt="uploaded"
+                  style={{
+                    maxWidth: '100%',
+                    maxHeight: '100%',
+                    objectFit: 'contain',
+                  }}
+                />
+              </div>
+            )}
             <MessageForm
               handleSubmit={handleSubmit}
               text={text}
               img={img}
+              loading={loading}
               setText={setText}
               setImg={setImg}
+              setLoading={setLoading}
             />
           </>
         ) : (
-          <h3 className="no_conv">Select a user to start conversation</h3>
+          <h3 className="no_conv">Select a user and start connection!</h3>
         )}
       </div>
     </div>
