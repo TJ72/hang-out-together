@@ -107,8 +107,6 @@ function GroupVideo() {
     });
   }, [topic, myId]);
 
-  // if (!event) return null;
-
   useEffect(() => {
     function updatePeers(participants: string[], videoStreams: IVideoStreams) {
       setPeersStream(
@@ -168,11 +166,6 @@ function GroupVideo() {
   useEffect(() => {
     rtcSessionRef.current.muted = muted;
   }, [muted]);
-
-  // useEffect(() => {
-  //   console.log('rtcSessionRef.current', rtcSessionRef.current);
-  //   return rtcSessionRef.current.close;
-  // }, []);
 
   return (
     <Wrapper>
