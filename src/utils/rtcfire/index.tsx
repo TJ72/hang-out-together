@@ -144,6 +144,7 @@ class RTCFireSession {
       this.options.isOfferer ||
       ((pid) => this.options.myId.localeCompare(pid) < 0);
     this.participants = this.options.participants || [];
+    this.close = this.close.bind(this);
 
     (async () => {
       try {
@@ -166,6 +167,7 @@ class RTCFireSession {
    * Shuts down the entire session
    */
   close() {
+    console.log('this', this);
     for (const pid in this.participantInfo) {
       this.onRemoveParticipant(pid);
     }

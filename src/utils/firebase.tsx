@@ -16,7 +16,7 @@ import {
 import { getStorage } from 'firebase/storage';
 import type { Event } from '../types/event';
 import type { Room } from '../types/room';
-import { IUser } from '../types/user';
+import type { IUser } from '../types/user';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,

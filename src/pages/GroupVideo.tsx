@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/media-has-caption */
 /* eslint-disable @typescript-eslint/no-unused-vars */
+// @ts-nocheck
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
@@ -73,6 +74,9 @@ function GroupVideo() {
   const [event, setEvent] = useState<Event>();
   const [status, setStatus] = useState('');
   const [muted, setMuted] = useState(false);
+  const [close, setClose] = useState(false);
+  const rtcSessionRef = useRef(null);
+
   const { topic } = useParams();
   // Check the conditions of online events
   useEffect(() => {
@@ -117,7 +121,7 @@ function GroupVideo() {
       );
     }
     function setupVideo() {
-      if (!myId) return;
+      if (!myId) return () => {};
       const participantsRef = ref(database, `${topic}/participants`);
       const videoStreams: any = {};
 
@@ -132,6 +136,7 @@ function GroupVideo() {
           const video: HTMLVideoElement = document.querySelector(
             '#my-video',
           ) as HTMLVideoElement;
+          if (!video) return;
           video.srcObject = stream;
         },
         onParticipantStream: (pid, stream) => {
@@ -140,15 +145,34 @@ function GroupVideo() {
         },
       });
 
+      rtcSessionRef.current = rtcSession;
+
       onValue(participantsRef, (snap: DataSnapshot) => {
         const participants = Object.keys(snap.val() || {});
         rtcSession.participants = participants;
         updatePeers(participants, videoStreams);
       });
+      return rtcSessionRef.current.close;
     }
 
-    setupVideo();
+    const closeConnection = setupVideo();
+    return () => {
+      closeConnection();
+    };
   }, [myId]);
+
+  useEffect(() => {
+    rtcSessionRef.current.close();
+  }, [close]);
+
+  useEffect(() => {
+    rtcSessionRef.current.muted = muted;
+  }, [muted]);
+
+  // useEffect(() => {
+  //   console.log('rtcSessionRef.current', rtcSessionRef.current);
+  //   return rtcSessionRef.current.close;
+  // }, []);
 
   return (
     <Wrapper>
@@ -189,6 +213,9 @@ function GroupVideo() {
             borderRadius: '100px',
             cursor: 'pointer',
             border: 'none',
+          }}
+          onClick={() => {
+            setClose(!close);
           }}
         >
           <Hangup />
