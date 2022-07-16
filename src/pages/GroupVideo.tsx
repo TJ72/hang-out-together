@@ -2,8 +2,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // @ts-nocheck
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams } from 'react-router-dom';
-import styled from 'styled-components';
+import { useNavigate, useParams } from 'react-router-dom';
+import styled, { css } from 'styled-components';
 import {
   ref,
   child,
@@ -27,7 +27,7 @@ interface IVideoStreams {
 
 const Wrapper = styled.div`
   width: 100%;
-  min-height: calc(100vh - 85px);
+  height: calc(100vh - 85px);
   margin-top: 85px;
   display: flex;
   flex-direction: column;
@@ -36,14 +36,51 @@ const Wrapper = styled.div`
   background-color: #212020;
 `;
 
-const VideoWrapper = styled.div`
+const VideosContainer = styled.div`
   width: 100%;
-  min-height: calc(100% - 60px);
+  height: calc(100% - 60px);
   margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+`;
+
+const VideoWrapper = styled.div<{ currentUsers: Number }>`
+  display: flex;
+  justify-content: center;
+  border-radius: 15px;
+  ${(props) =>
+    props.currentUsers === 1 &&
+    css`
+      width: 60%;
+      height: 90%;
+    `}
+  ${(props) =>
+    props.currentUsers > 1 &&
+    props.currentUsers <= 4 &&
+    css`
+      width: 50%;
+      height: 50%;
+    `}
+  ${(props) =>
+    props.currentUsers > 4 &&
+    props.currentUsers <= 9 &&
+    css`
+      width: calc(100% / 3);
+      height: calc(100% / 3);
+    `}
+  ${(props) =>
+    props.currentUsers > 9 &&
+    props.currentUsers <= 16 &&
+    css`
+      width: 25%;
+      height: 25%;
+    `}
   video {
-    min-width: 25%;
-    min-height: calc(100% / 3);
-    border-radius: 7px;
+    width: 95%;
+    border-radius: 8px;
+    object-fit: cover;
   }
 `;
 
@@ -52,7 +89,7 @@ const ButtonWrapper = styled.div`
   margin-bottom: 10px;
   display: flex;
   justify-content: center;
-  gap: 20px;
+  gap: 15px;
 `;
 
 function Video({ videoStream }: { videoStream: MediaStream }) {
@@ -76,6 +113,7 @@ function GroupVideo() {
   const [muted, setMuted] = useState(false);
   const [close, setClose] = useState(false);
   const rtcSessionRef = useRef(null);
+  const navigate = useNavigate();
 
   const { topic } = useParams();
   // Check the conditions of online events
@@ -169,12 +207,16 @@ function GroupVideo() {
 
   return (
     <Wrapper>
-      <VideoWrapper>
-        <video id="my-video" muted autoPlay playsInline />
+      <VideosContainer>
+        <VideoWrapper currentUsers={peersStreams.length + 1}>
+          <video id="my-video" muted autoPlay playsInline />
+        </VideoWrapper>
         {peersStreams.map((stream: { pid: string; video: MediaStream }) => (
-          <Video key={stream.pid} videoStream={stream.video} />
+          <VideoWrapper currentUsers={peersStreams.length + 1}>
+            <Video key={stream.pid} videoStream={stream.video} />
+          </VideoWrapper>
         ))}
-      </VideoWrapper>
+      </VideosContainer>
       <ButtonWrapper>
         <button
           type="button"
@@ -209,6 +251,7 @@ function GroupVideo() {
           }}
           onClick={() => {
             setClose(!close);
+            navigate('../', { replace: true });
           }}
         >
           <Hangup />
