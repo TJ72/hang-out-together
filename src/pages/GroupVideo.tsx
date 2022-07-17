@@ -57,14 +57,27 @@ const VideoWrapper = styled.div<{ currentUsers: Number }>`
       height: 90%;
     `}
   ${(props) =>
-    props.currentUsers > 1 &&
-    props.currentUsers <= 4 &&
+    props.currentUsers === 2 &&
     css`
       width: 50%;
+      height: 90%;
+    `}
+    ${(props) =>
+    props.currentUsers > 2 &&
+    props.currentUsers <= 4 &&
+    css`
+      width: 40%;
       height: 50%;
     `}
   ${(props) =>
     props.currentUsers > 4 &&
+    props.currentUsers <= 6 &&
+    css`
+      width: calc(100% / 3);
+      height: 50%;
+    `}
+    ${(props) =>
+    props.currentUsers > 6 &&
     props.currentUsers <= 9 &&
     css`
       width: calc(100% / 3);

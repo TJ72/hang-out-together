@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { setDoc, doc, Timestamp } from 'firebase/firestore';
@@ -82,6 +82,7 @@ function Register() {
     error: null,
     loading: false,
   });
+  const navigate = useNavigate();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { name, email, password, error, loading } = data;
   const handleChange = (e: { target: { name: any; value: any } }) => {
@@ -119,6 +120,7 @@ function Register() {
     } catch (err: any) {
       setData({ ...data, error: err.message, loading: false });
     }
+    navigate('../', { replace: true });
   };
   return (
     <Wrapper>

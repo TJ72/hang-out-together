@@ -232,7 +232,7 @@ function Messenger() {
             />
           </>
         ) : (
-          <h3 className="no_conv">Select a user and start connection!</h3>
+          <h3 className="no_conv">Select a user and start the connection!</h3>
         )}
       </div>
     </div>
