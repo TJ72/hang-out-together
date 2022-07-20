@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
@@ -166,7 +165,7 @@ function CreateEvent() {
     navigate(`/event/${eventRef.id}`, { replace: true });
   };
 
-  const handleColor = (time) =>
+  const handleColor = (time: { getHours: () => number }) =>
     time.getHours() > 12 ? 'text-success' : 'text-error';
 
   return (
@@ -257,7 +256,11 @@ function CreateEvent() {
         />
       </ImageContainer>
       <Title>Detail</Title>
-      <ReactQuill value={detail} onChange={setDetail} />
+      <ReactQuill
+        style={{ height: '120px' }}
+        value={detail}
+        onChange={setDetail}
+      />
       <SubmitBtn
         type="button"
         onClick={() => {
