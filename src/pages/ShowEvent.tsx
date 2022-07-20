@@ -442,6 +442,12 @@ function ShowEvent() {
           <TextSubmitBtn
             type="button"
             onClick={() => {
+              if (!user) {
+                // eslint-disable-next-line no-alert
+                alert('請先登入後繼續！');
+                navigate('/login', { replace: true });
+                return;
+              }
               if (!content) return;
               setCommentDoc({
                 eventId: id,
@@ -459,6 +465,7 @@ function ShowEvent() {
                 } as Comment,
                 ...comments,
               ]);
+              setCommentUsers([user, ...commentUsers]);
             }}
           >
             Submit
