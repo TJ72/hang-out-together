@@ -264,6 +264,9 @@ section .form {
 }
 
 @media screen and (max-width: 767px) {
+  nav div a {
+    margin-right: 10px;
+  }
   .home_container {
     grid-template-columns: 2fr 3fr;
   }
@@ -278,6 +281,9 @@ section .form {
 }
 
 @media screen and (max-width: 576px) {
+  nav div a {
+    margin-right: 5px;
+  }
   .home_container {
     grid-template-columns: 1fr 5fr;
   }
