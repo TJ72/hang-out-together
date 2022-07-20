@@ -260,7 +260,13 @@ function CreateEvent() {
       <ReactQuill value={detail} onChange={setDetail} />
       <SubmitBtn
         type="button"
-        onClick={() =>
+        onClick={() => {
+          if (!userInfo) {
+            // eslint-disable-next-line no-alert
+            alert('請先登入後繼續！');
+            navigate('/login', { replace: true });
+            return;
+          }
           setEventDoc({
             title,
             type,
@@ -271,8 +277,8 @@ function CreateEvent() {
             mainImageUrl: imgUrl,
             detail,
             members: [],
-          })
-        }
+          });
+        }}
       >
         Create
       </SubmitBtn>

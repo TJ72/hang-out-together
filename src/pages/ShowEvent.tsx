@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+// @ts-nocheck
 import React, { useEffect, useState, useContext } from 'react';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
@@ -25,7 +26,7 @@ import toggleUserJoins from '../utils/toggleUserJoins';
 import Avatar from '../assets/avatar.png';
 import Time from '../components/svg/Time';
 import Location from '../components/svg/Location';
-import { IUser } from '../types/user';
+import type { IUser } from '../types/user';
 
 const Wrapper = styled.div`
   padding-bottom: 50px;
@@ -244,13 +245,14 @@ const ONLINE_CONSTRAINT = 4;
 function ShowEvent() {
   const { id } = useParams();
   const [event, setEvent] = useState<Event | null>(null);
+  const [host, setHost] = useState<IUser | null>(null);
   const [members, setMembers] = useState<(IUser | null)[]>([]);
   const [attend, setAttend] = useState(false);
   const [content, setContent] = useState('');
   const [comments, setComments] = useState<(Comment | null)[]>([]);
+  const [commentUsers, setCommentUsers] = useState<(IUser | null)[]>([]);
   const user = useContext(AuthContext);
   if (!id) return null;
-
   useEffect(() => {
     getEventDoc(id).then((res: Event) => {
       if (!res) return;
@@ -288,6 +290,32 @@ function ShowEvent() {
     });
     setAttend(currAttend);
   }, [user]);
+
+  useEffect(() => {
+    if (!event) return;
+    const getUserDoc = async (uid: string) => {
+      const userRef = doc(db, 'users', uid);
+      const snapshot = await getDoc(userRef);
+      return snapshot.data();
+    };
+    const getAttendees = async () => {
+      const attendees = await Promise.all(
+        members.map((member) => getUserDoc(member?.uid as string)),
+      );
+      return attendees;
+    };
+    const getCommentUser = async () => {
+      const commentUsersDoc = await Promise.all(
+        comments.map((comment) => getUserDoc(comment?.author.uid as string)),
+      );
+      return commentUsersDoc;
+    };
+    getUserDoc(event!.host.uid).then((userDoc) => setHost(userDoc as IUser));
+    getAttendees().then((attendees) => setMembers(attendees));
+    getCommentUser().then((commentUsersDoc) =>
+      setCommentUsers(commentUsersDoc),
+    );
+  }, [event]);
 
   if (!event) return null;
 
@@ -360,10 +388,10 @@ function ShowEvent() {
           {attend ? 'Cancel' : 'Attend'}
         </JoinBtn>
         <Host>
-          <img src={event.host.avatar || Avatar} alt="avatar" />
+          <img src={host?.avatar || Avatar} alt="avatar" />
           <div>
             Hosted by
-            <HostName>{event.host.name}</HostName>
+            <HostName>{host?.name}</HostName>
           </div>
         </Host>
         <MainContainer>
@@ -373,7 +401,7 @@ function ShowEvent() {
               <Time />
               Date
               <div style={{ marginLeft: '20px' }}>
-                {event.date.toDate().toDateString()}
+                {event.date.toDate().toLocaleString().slice(0, -3)}
               </div>
             </Info>
             <Info>
@@ -395,16 +423,7 @@ function ShowEvent() {
             </AttendeeContainer>
           </InfoWrapper>
         </MainContainer>
-
-        {/* <button
-          type="button"
-          onClick={() => {
-            toggleUserFollows(event.id!);
-          }}
-        >
-          Follow
-        </button> */}
-        <DetailTitle>More Detail</DetailTitle>
+        <DetailTitle>More Details</DetailTitle>
         {/* eslint-disable-next-line react/no-danger */}
         <div dangerouslySetInnerHTML={{ __html: event.detail }} />
         <CommentsContainer>
@@ -423,6 +442,12 @@ function ShowEvent() {
           <TextSubmitBtn
             type="button"
             onClick={() => {
+              if (!user) {
+                // eslint-disable-next-line no-alert
+                alert('請先登入後繼續！');
+                navigate('/login', { replace: true });
+                return;
+              }
               if (!content) return;
               setCommentDoc({
                 eventId: id,
@@ -440,16 +465,17 @@ function ShowEvent() {
                 } as Comment,
                 ...comments,
               ]);
+              setCommentUsers([user, ...commentUsers]);
             }}
           >
             Submit
           </TextSubmitBtn>
-          {comments.map((comment) => (
+          {comments.map((comment, idx) => (
             <EventComment
               key={comment!.createdAt.toString()}
-              name={comment!.author.name}
+              name={commentUsers[idx]?.name}
               createdAt={comment!.createdAt}
-              avatar={comment!.author?.avatar || ''}
+              avatar={commentUsers[idx]?.avatar || ''}
               content={comment!.content}
             />
           ))}
