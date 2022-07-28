@@ -43,7 +43,7 @@ function ChatRoom({ chat, user1, user, handleSelection }: RoomProps) {
   }, []);
   return (
     <div
-      className={`user_wrapper ${chat?.name === user.name && 'selected_user'}`}
+      className={`user_wrapper ${chat?.uid === user.uid && 'selected_user'}`}
       onClick={() => handleSelection(user)}
       aria-hidden="true"
     >
