@@ -32,7 +32,7 @@ const Logo = styled.div`
   @media (max-width: 768px) {
     font-size: 1.7rem;
   }
-  @media (max-width: 391px) {
+  @media (max-width: 394px) {
     font-size: 1.5rem;
   }
 `;

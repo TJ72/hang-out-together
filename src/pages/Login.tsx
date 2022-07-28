@@ -20,12 +20,22 @@ const Banner = styled.div`
   background-size: cover;
   background-position: 50%;
   opacity: 0.7;
+  @media (max-width: 821px) {
+    width: 40%;
+  }
+  @media (max-width: 500px) {
+    display: none;
+  }
 `;
 
 const LoginForm = styled.div`
   width: 40%;
   margin-top: 8%;
   margin-left: 13%;
+  @media (max-width: 500px) {
+    width: 80%;
+    margin: 8% auto;
+  }
 `;
 
 const InputContainer = styled.div`
@@ -46,6 +56,12 @@ const InputContainer = styled.div`
     border-radius: 10px;
     font-size: 1rem;
     letter-spacing: 0.7px;
+    @media (max-width: 821px) {
+      width: 75%;
+    }
+    @media (max-width: 500px) {
+      width: 80%;
+    }
   }
 `;
 
@@ -62,6 +78,11 @@ const LoginBtn = styled.button`
   border-radius: 10px;
   &:hover {
     background-color: #e33b3b;
+  }
+  @media (max-width: 500px) {
+    width: 120px;
+    height: 45px;
+    margin-top: 25px;
   }
 `;
 
