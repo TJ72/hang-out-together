@@ -142,6 +142,9 @@ const SubmitBtn = styled.button`
     background-color: #aad7f0;
     color: #1c6791;
   }
+  @media (max-width: 500px) {
+    margin-top: 85px;
+  }
 `;
 
 function CreateEvent() {
