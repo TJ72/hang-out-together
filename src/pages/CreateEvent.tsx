@@ -46,6 +46,9 @@ const Background = styled.div<{ backgroundImage: string }>`
   left: 0;
   opacity: 0.7;
   z-index: -1;
+  @media (max-width: 500px) {
+    display: none;
+  }
 `;
 
 const Wrapper = styled.div`
@@ -55,6 +58,9 @@ const Wrapper = styled.div`
   margin: 115px auto 60px;
   background-color: #fff;
   border-radius: 12px;
+  @media (max-width: 500px) {
+    width: 100%;
+  }
 `;
 
 const Title = styled.div`
@@ -76,6 +82,9 @@ const ItemInput = styled.input`
   &:focus {
     outline: none !important;
     border-color: #719ece;
+  }
+  @media (max-width: 500px) {
+    width: 80%;
   }
 `;
 
@@ -108,6 +117,13 @@ const ImageContainer = styled.label`
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
+  @media (max-width: 821px) {
+    width: 90%;
+    height: 250px;
+  }
+  @media (max-width: 500px) {
+    height: 200px;
+  }
 `;
 
 const SubmitBtn = styled.button`
