@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>rtcfire Simple Multi-peer Demo</title>
+    <meta name="viewport" content="width=device-width, minimum-scale=1" />
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 20px;
+      }
+
+      #topic-header code {
+        font-size: 16px;
+        color: coral;
+      }
+
+      #peers-header,
+      #zero-state {
+        display: none;
+      }
+
+      #peers {
+        list-style: none;
+        padding: 0;
+        display: flex;
+        flex-flow: row wrap;
+      }
+
+      video {
+        background-color: #eee;
+        object-fit: cover;
+        width: 300px;
+        aspect-ratio: 4 / 3;
+        max-width: 100%;
+      }
+
+      #peers video {
+        margin: 0 8px 8px 0;
+      }
+
+      #my-video {
+        transform: scaleX(-1);
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>
+      <a href="https://github.com/romannurik/rtcfire">rtcfire</a> Simple
+      Multi-Peer Demo
+    </h1>
+    <p id="topic-header"></p>
+    <h3>Your local video stream</h3>
+    <video id="my-video" muted autoplay playsinline></video>
+
+    <h3 id="peers-header">Other participants</h3>
+    <ul id="peers"></ul>
+    <div id="zero-state">
+      Share this page's URL with a friend, or open it in another tab!
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-database.js"></script>
+    <script src="https://unpkg.com/rtcfire/dist/index.umd.js"></script>
+
+    <script>
+      const FRUIT = [
+        'apple',
+        'apricot',
+        'avocado',
+        'banana',
+        'cacao',
+        'cashew',
+        'cherry',
+        'coconut',
+        'currant',
+        'date',
+        'fig',
+        'grape',
+        'guava',
+        'kiwi',
+        'kumquat',
+        'lemon',
+        'lime',
+        'lychee',
+        'melon',
+        'nutmeg',
+        'orange',
+        'papaya',
+        'peach',
+        'pear',
+        'plum',
+        'pumpkin',
+        'tomato',
+      ];
+
+      const randomTopic = () =>
+        Array(3)
+          .fill()
+          .map(() => FRUIT[Math.floor(Math.random() * FRUIT.length)])
+          .join('-');
+
+      const TAB_ID = String(Math.floor(Math.random() * 9999));
+      class Demo {
+        constructor() {
+          this.topic = (window.location.search.match(/topic=(.+)/) || [])[1];
+          this.myId = String(Math.floor(Math.random() * 9999));
+          console.log(this.myId);
+          if (this.topic) {
+            document.querySelector(
+              '#topic-header',
+            ).innerHTML += `Room/topic: <code><b>${this.topic}</b></code>`;
+            this.setupFirebase();
+            // this.signIn();
+            this.setupVideo();
+          } else {
+            window.location.search = `topic=${randomTopic()}`;
+          }
+
+          // fix for mobile browser freezes
+          window.addEventListener('beforeunload', () => {
+            this.rtcSession && this.rtcSession.close();
+          });
+        }
+
+        setupFirebase() {
+          firebase.initializeApp({
+            apiKey: 'AIzaSyDUeSX9EYJzc-0DoxRZbK7HSz-9nehq3Lo',
+            authDomain: 'hang-out-together.firebaseapp.com',
+            projectId: 'hang-out-together',
+            storageBucket: 'hang-out-together.appspot.com',
+            appId: '1:48209665356:web:ed662fdf16d2ee1f9a03e9',
+            databaseURL:
+              'https://hang-out-together-default-rtdb.asia-southeast1.firebasedatabase.app',
+          });
+        }
+
+        setupVideo() {
+          let participantsRef = firebase
+            .database()
+            .ref(`${this.topic}/participants`);
+          let videoStreams = {};
+
+          let meRef = participantsRef.child(this.myId);
+          meRef.update({ joined: true });
+          meRef.onDisconnect().set(null);
+
+          this.rtcSession = rtcfire.rtcFireSession({
+            myId: this.myId,
+            negotiationRef: firebase
+              .database()
+              .ref(`${this.topic}/participants`),
+            onMyStream: (stream) =>
+              (document.querySelector('#my-video').srcObject = stream),
+            onParticipantStream: (pid, stream) => {
+              videoStreams[pid] = stream;
+              this.updatePeers(this.rtcSession.participants, videoStreams);
+            },
+          });
+
+          participantsRef.on('value', (snap) => {
+            console.log('on value =====', snap);
+            let participants = Object.keys(snap.val() || {});
+            this.rtcSession.participants = participants;
+            this.updatePeers(participants, videoStreams);
+          });
+        }
+
+        updatePeers(participants, videoStreams) {
+          participants = new Set(
+            participants.filter((pid) => pid !== this.myId),
+          );
+          console.log(participants);
+          let parent = document.querySelector('#peers');
+
+          // new and existing peers
+          for (let pid of participants) {
+            let node = parent.querySelector(`li[data-pid="${pid}"]`);
+            if (!node) {
+              node = document.createElement('li');
+              node.setAttribute('data-pid', pid);
+              node.innerHTML = '<video autoplay playsinline>';
+              parent.appendChild(node);
+            }
+
+            let video = node.querySelector('video');
+            video.srcObject = videoStreams[pid];
+          }
+
+          // removed peers
+          for (let existing of parent.querySelectorAll('li')) {
+            if (!participants.has(existing.getAttribute('data-pid'))) {
+              parent.removeChild(existing);
+            }
+          }
+
+          // zero state
+          let zero = participants.size === 0;
+          document.querySelector('#peers-header').style.display = zero
+            ? 'none'
+            : 'block';
+          document.querySelector('#zero-state').style.display = zero
+            ? 'block'
+            : 'none';
+        }
+      }
+
+      window.demo = new Demo();
+    </script>
+  </body>
+</html>
