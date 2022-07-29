@@ -50,9 +50,9 @@ function ChatRoom({ chat, user1, user, handleSelection }: RoomProps) {
       <div className="user_info">
         <div className="user_detail">
           <img src={user.avatar || Img} alt="avatar" className="avatar" />
-          <h4>{user.name}</h4>
+          <h4 className="chatroom_detail">{user.name}</h4>
           {data?.from !== user1 && data?.unread && (
-            <small className="unread">New</small>
+            <small className="unread chatroom_detail">New</small>
           )}
         </div>
         <div
@@ -60,7 +60,7 @@ function ChatRoom({ chat, user1, user, handleSelection }: RoomProps) {
         />
       </div>
       {data && (
-        <p className="truncate">
+        <p className="truncate chatroom_detail">
           <strong>{data.from === user1 ? 'Me:' : null}</strong>
           {data.text}
         </p>

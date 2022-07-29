@@ -287,9 +287,9 @@ section .form {
   .home_container {
     grid-template-columns: 1fr 5fr;
   }
-  .user_wrapper {
+  /* .user_wrapper {
     display: none;
-  }
+  } */
   .sm_container {
     padding: 10px 0px;
     text-align: center;
@@ -308,5 +308,8 @@ section .form {
 
   .message_wrapper p {
     max-width: 100%;
+  }
+  .chatroom_detail {
+    display: none;
   }
 }
