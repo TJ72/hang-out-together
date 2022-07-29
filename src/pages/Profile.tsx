@@ -141,6 +141,7 @@ const EventImage = styled.div`
   }
   @media (max-width: 500px) {
     width: 60%;
+    height: 150px;
   }
 `;
 
@@ -197,8 +198,8 @@ function Event({ join }: { join: IJoin }) {
               to={`/group-video/${join.id}`}
               style={{ textDecoration: 'none' }}
             >
-              Online Event Link
-            </Link>{' '}
+              Online Link
+            </Link>
           </EventInfo>
         )}
       </EventDetails>
