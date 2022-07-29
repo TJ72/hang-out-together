@@ -264,6 +264,9 @@ section .form {
 }
 
 @media screen and (max-width: 767px) {
+  nav div a {
+    margin-right: 10px;
+  }
   .home_container {
     grid-template-columns: 2fr 3fr;
   }
@@ -278,11 +281,17 @@ section .form {
 }
 
 @media screen and (max-width: 576px) {
+  nav div a {
+    margin-right: 5px;
+  }
   .home_container {
     grid-template-columns: 1fr 5fr;
   }
-  .user_wrapper {
-    display: none;
+  .users_container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* justify-content: center; */
   }
   .sm_container {
     padding: 10px 0px;
@@ -302,5 +311,14 @@ section .form {
 
   .message_wrapper p {
     max-width: 100%;
+  }
+  .chatroom_detail {
+    display: none;
+  }
+  .user_status {
+    display: none;
+  }
+  .user_wrapper {
+    padding: 6px;
   }
 }

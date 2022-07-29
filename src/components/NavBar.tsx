@@ -17,12 +17,24 @@ const Wrapper = styled.nav`
   box-shadow: 0 0 5px #c4c0c0;
   background-color: #fff;
   z-index: 10;
+  @media (max-width: 768px) {
+    padding: 0 10px;
+  }
+  @media (max-width: 375px) {
+    padding: 0;
+  }
 `;
 
 const Logo = styled.div`
   font-size: 2.3rem;
   font-family: 'Kaushan Script';
   color: #f54545;
+  @media (max-width: 768px) {
+    font-size: 1.7rem;
+  }
+  @media (max-width: 394px) {
+    font-size: 1.5rem;
+  }
 `;
 
 const NavItems = styled.div`
@@ -50,6 +62,16 @@ const NavItem = styled.div`
   :hover:after {
     width: 100%;
     left: 0;
+  }
+  @media (max-width: 768px) {
+    font-size: 0.9rem;
+    margin-left: 5px;
+    :after {
+      height: 3px;
+    }
+  }
+  @media (max-width: 376px) {
+    font-size: 0.5rem;
   }
 `;
 

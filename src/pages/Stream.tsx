@@ -2,7 +2,7 @@
 // @ts-nocheck
 import React, { useEffect, useRef } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import {
   collection,
   doc,
@@ -43,6 +43,25 @@ const VideoContainer = styled.video`
   background: #666161;
   border-radius: 15px;
   border: 1px solid #c2bcbc;
+  @media (max-width: 500px) {
+    ${(props) =>
+      props.local &&
+      css`
+        width: 23%;
+        height: 15vh;
+        position: fixed;
+        right: 30px;
+        bottom: 120px;
+        border-radius: 3px;
+      `}
+    ${(props) =>
+      props.remote &&
+      css`
+        width: 80%;
+        height: 60vh;
+        border-radius: 3px;
+      `}
+  }
 `;
 
 const servers = {
@@ -218,12 +237,14 @@ function Stream() {
       <VideoWrapper>
         <VideoContainer
           id="webcamVideo"
+          local
           autoPlay
           playsInline
           ref={localVideo}
         />
         <VideoContainer
           id="remoteVideo"
+          remote
           autoPlay
           playsInline
           ref={remoteVideo}

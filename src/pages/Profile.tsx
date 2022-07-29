@@ -47,6 +47,14 @@ const Container = styled.div`
   border: 1px solid #e4e6e9;
   border-radius: 15px;
   background-color: #fff;
+  @media (max-width: 800px) {
+    width: 100%;
+    margin: 0;
+    border-radius: 0px;
+  }
+  @media (max-width: 500px) {
+    padding: 30px 0px;
+  }
 `;
 
 const UserName = styled.div`
@@ -67,6 +75,9 @@ const EventsNavBar = styled.ul`
   padding: 0;
   display: flex;
   list-style: none;
+  @media (max-width: 500px) {
+    justify-content: center;
+  }
 `;
 
 const NavItem = styled.li<{ status: string }>`
@@ -98,11 +109,20 @@ const EventContainer = styled.div`
   padding: 10px 20px;
   background-color: #fff;
   border: 1px solid #e4e6e9;
+  @media (max-width: 500px) {
+    border: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
 `;
 
 const EventWrapper = styled.div`
   padding: 20px;
   display: flex;
+  @media (max-width: 500px) {
+    padding: 0px;
+  }
 `;
 
 const EventImage = styled.div`
@@ -119,12 +139,39 @@ const EventImage = styled.div`
   img:hover {
     transform: scale(1.2);
   }
+  @media (max-width: 500px) {
+    width: 60%;
+    height: 150px;
+  }
 `;
 
 const EventDetails = styled.div`
+  width: 40%;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  @media (max-width: 500px) {
+    width: 45%;
+    gap: 8px;
+  }
+`;
+
+const EventTitle = styled.div`
+  font-size: 1.2rem;
+  font-weight: 600;
+  @media (max-width: 500px) {
+    font-size: 1.1rem;
+  }
+`;
+
+const EventInfo = styled.div`
+  display: flex;
+  align-items: center;
+  font-size: 1.02rem;
+  gap: 10px;
+  @media (max-width: 500px) {
+    font-size: 0.94rem;
+  }
 `;
 
 function Event({ join }: { join: IJoin }) {
@@ -136,40 +183,24 @@ function Event({ join }: { join: IJoin }) {
         </Link>
       </EventImage>
       <EventDetails>
-        <div style={{ fontSize: '1.2rem', fontWeight: '600' }}>
-          {join.title}
-        </div>
+        <EventTitle>{join.title}</EventTitle>
         <div style={{ fontSize: '1rem', fontWeight: '550' }}>
           Hosted by: {join.host.name}
         </div>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            fontSize: '1.02rem',
-            gap: '10px',
-          }}
-        >
+        <EventInfo>
           <EventTime />
           {join.date.toDate().toLocaleString().slice(0, -3)}
-        </div>
+        </EventInfo>
         {join.type === 'Online' && (
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              fontSize: '1.02rem',
-              gap: '10px',
-            }}
-          >
+          <EventInfo>
             <GroupLink />
             <Link
               to={`/group-video/${join.id}`}
               style={{ textDecoration: 'none' }}
             >
-              Online Event Link
-            </Link>{' '}
-          </div>
+              Online Link
+            </Link>
+          </EventInfo>
         )}
       </EventDetails>
     </EventWrapper>

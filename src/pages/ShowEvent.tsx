@@ -37,6 +37,10 @@ const Container = styled.div`
   max-width: 1120px;
   margin: 0 auto;
   position: relative;
+  @media (max-width: 1279px) {
+    width: 100%;
+    padding: 0 30px;
+  }
 `;
 
 const JoinBtn = styled.button`
@@ -57,6 +61,14 @@ const JoinBtn = styled.button`
     color: #f65858;
     border: 1.5px solid red;
   }
+  @media (max-width: 1068px) {
+    width: 100px;
+    height: 46px;
+    right: 14%;
+  }
+  @media (max-width: 500px) {
+    top: 37px;
+  }
 `;
 
 const Title = styled.div`
@@ -65,6 +77,12 @@ const Title = styled.div`
   font-family: 'Heebo';
   font-weight: 600;
   letter-spacing: 1.2px;
+  @media (max-width: 768px) {
+    font-size: 1.8rem;
+  }
+  @media (max-width: 500px) {
+    font-size: 1.5rem;
+  }
 `;
 
 const Host = styled.div`
@@ -86,10 +104,22 @@ const MainContainer = styled.div`
   margin-top: 35px;
   display: flex;
   gap: 80px;
+  @media (max-width: 1068px) {
+    flex-direction: column;
+    gap: 30px;
+  }
   img {
     width: 600px;
     height: 400px;
     border-radius: 6px;
+    @media (max-width: 1279px) {
+      width: 570px;
+      height: 400px;
+    }
+    @media (max-width: 1068px) {
+      width: 80%;
+      height: calc(80% * 3 / 4);
+    }
   }
 `;
 
@@ -137,12 +167,19 @@ const DetailTitle = styled.div`
   box-shadow: 0 4px 2px -2px #f65858;
   font-size: 1.4rem;
   font-weight: 550;
+  @media (max-width: 768px) {
+    width: 90%;
+  }
 `;
 
 const CommentsContainer = styled.div`
   width: 70%;
   min-width: 600px;
   margin-top: 50px;
+  @media (max-width: 768px) {
+    width: 90%;
+    min-width: 0px;
+  }
 `;
 
 const CommentTitle = styled.div`
@@ -171,6 +208,10 @@ const TextArea = styled.div`
     border-radius: 5px;
     font-size: 1rem;
     letter-spacing: 0.7px;
+    @media (max-width: 768px) {
+      width: 90%;
+      height: 80px;
+    }
     :focus {
       outline: 0 !important;
       box-shadow: 0 0 1px 1px #043957;

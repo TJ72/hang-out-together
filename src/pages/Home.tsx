@@ -20,11 +20,25 @@ const Cover = styled.div`
   div {
     font-family: 'Courgette';
     font-weight: 600;
-    font-size: 2.5rem;
+    font-size: 2.5em;
     color: #e6776796;
     position: absolute;
     top: 30%;
     right: 5%;
+  }
+  @media (max-width: 1279px) {
+    div {
+      font-size: 1.8rem;
+    }
+  }
+  @media (max-width: 768px) {
+    height: 300px;
+    div {
+      display: none;
+    }
+  }
+  @media (max-width: 376px) {
+    height: 260px;
   }
 `;
 
@@ -46,6 +60,17 @@ const CreateBtn = styled.button`
     color: #f54545;
     border: 1px solid #f54545;
   }
+  @media (max-width: 768px) {
+    width: 120px;
+    height: 50px;
+    font-size: 1rem;
+    }
+  }
+  @media (max-width: 376px) {
+    width: 90px;
+    height: 40px;
+    font-size: 0.8rem;
+  }
 `;
 
 const Container = styled.div`
@@ -56,6 +81,18 @@ const Container = styled.div`
   justify-content: flex-start;
   gap: 5%;
   flex-wrap: wrap;
+  @media (max-width: 1279px) {
+    justify-content: center;
+  }
+  @media (max-width: 500px) {
+    margin: 35px auto;
+  }
+`;
+
+const ItemWrapper = styled(Link)`
+  text-decoration: none;
+  width: 30%;
+  min-width: 320px;
 `;
 
 const Item = styled.div`
@@ -102,7 +139,7 @@ function EventItem({
   mainImageUrl,
 }: Event) {
   return (
-    <Link style={{ textDecoration: 'none', width: '30%' }} to={`/event/${id}`}>
+    <ItemWrapper to={`/event/${id}`}>
       <Item>
         <img style={{ width: '100%' }} src={mainImageUrl} alt="Activity" />
         <ItemInfo>
@@ -115,7 +152,7 @@ function EventItem({
           <ItemDetail>{members.length} attendees</ItemDetail>
         </ItemInfo>
       </Item>
-    </Link>
+    </ItemWrapper>
   );
 }
 
