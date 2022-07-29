@@ -278,6 +278,18 @@ section .form {
   .message_wrapper p {
     max-width: 75%;
   }
+  .img_container {
+    width: 100px;
+    height: 100px;
+    margin-left: 10px;
+  }
+  .img_container img {
+    width: 100px;
+    height: 100px;
+  }
+  .text_container {
+    width: 60%;
+  }
 }
 
 @media screen and (max-width: 576px) {
