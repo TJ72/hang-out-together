@@ -82,10 +82,10 @@ const Container = styled.div`
   gap: 5%;
   flex-wrap: wrap;
   @media (max-width: 1279px) {
-    width: 60%;
+    justify-content: center;
   }
-  @media (max-width: 376px) {
-    width: 90%;
+  @media (max-width: 500px) {
+    margin: 35px auto;
   }
 `;
 
@@ -93,9 +93,6 @@ const ItemWrapper = styled(Link)`
   text-decoration: none;
   width: 30%;
   min-width: 320px;
-  @media (max-width: 1279px) {
-    width: 40%;
-  }
 `;
 
 const Item = styled.div`
