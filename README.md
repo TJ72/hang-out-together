@@ -1,4 +1,4 @@
-# <img width="60px" src="src/image/favicon.png"/> Hang Out Together
+# Hang Out Together
 
 ## Introduction
 
