@@ -3,4 +3,4 @@
 ## Introduction
 
 ## Link
-Website Link: <https://hang-out-together.web.app//><br/>
+Website Link: <https://hang-out-together.web.app/><br/>
