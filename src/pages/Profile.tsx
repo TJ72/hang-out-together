@@ -62,6 +62,9 @@ const UserName = styled.div`
   font-size: 1.5rem;
   font-weight: 600;
   letter-spacing: 1px;
+  @media (max-width: 767px) {
+    font-size: 1.2rem;
+  }
 `;
 
 const UserMail = styled.div`
@@ -69,6 +72,9 @@ const UserMail = styled.div`
   margin-top: 10px;
   font-size: 1.2rem;
   font-weight: 550;
+  @media (max-width: 767px) {
+    font-size: 1.1rem;
+  }
 `;
 
 const EventsNavBar = styled.ul`
@@ -172,6 +178,16 @@ const EventInfo = styled.div`
   @media (max-width: 500px) {
     font-size: 0.94rem;
   }
+`;
+
+const NoResult = styled.div`
+  padding: 20px 30px 50px;
+  font-size: 1.3rem;
+  font-weight: 550;
+`;
+
+const DiscoverLink = styled.div`
+  margin-top: 20px;
 `;
 
 function Event({ join }: { join: IJoin }) {
@@ -318,10 +334,22 @@ function Profile() {
           </NavItem>
         </EventsNavBar>
         <EventContainer>
-          {presentEvents &&
+          {presentEvents.length ? (
             presentEvents.map((join) => (
               <Event join={join as IJoin} key={join?.id} />
-            ))}
+            ))
+          ) : (
+            <NoResult>
+              No {status} Event!
+              {status === 'Attending' && (
+                <DiscoverLink>
+                  <Link style={{ fontSize: '1.1rem' }} to="/">
+                    Discover new event
+                  </Link>
+                </DiscoverLink>
+              )}
+            </NoResult>
+          )}
         </EventContainer>
       </Container>
     </Wrapper>

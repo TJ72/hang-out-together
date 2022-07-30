@@ -167,7 +167,6 @@ class RTCFireSession {
    * Shuts down the entire session
    */
   close() {
-    console.log('this', this);
     for (const pid in this.participantInfo) {
       this.onRemoveParticipant(pid);
     }
