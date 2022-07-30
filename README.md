@@ -1,5 +1,5 @@
 # Hang Out Together
-
+> A social networking website that allows users to create customized events with an online chat service.
 ## Introduction
 
 + Create customized events, either for outdoor, indoor, or online type.
