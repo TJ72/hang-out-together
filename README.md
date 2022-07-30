@@ -8,7 +8,14 @@
 + Host a multiple peers video chat for online events.
 
 ## Link
-Website Link: <https://hang-out-together.web.app/><br/>
+
+Website Link: **[Hang Out Together](https://hang-out-together.web.app/)**
++ **User 1**
+  + Account: guest1@hangout.com
+  + Password: 000000
++ **User 2**
+  + Account: guest2@hangout.com
+  + Password: 000000
 
 ## Techniques
 
