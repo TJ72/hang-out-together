@@ -45,7 +45,7 @@ Website Link: **[Hang Out Together](https://hang-out-together.web.app/)**
 ## Demo
 
 + Chat Room
-![](https://i.imgur.com/LBCwW1q.gif)
+<img width="800px" height="400px" algin="center" src="https://i.imgur.com/LBCwW1q.gif"/>
 
 ## Contract
   
