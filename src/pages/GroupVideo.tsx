@@ -1,5 +1,4 @@
 /* eslint-disable jsx-a11y/media-has-caption */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 // @ts-nocheck
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -15,7 +14,6 @@ import {
 import { Timestamp } from 'firebase/firestore';
 import { rtcFireSession } from '../utils/rtcfire';
 import { database, auth, getEventDoc } from '../utils/firebase';
-import type { Event } from '../types/event';
 import Hangup from '../components/svg/Hangup';
 import Microphone from '../components/svg/Microphone';
 import Microphoneoff from '../components/svg/Microphoneoff';
@@ -121,7 +119,6 @@ function GroupVideo() {
   const [peersStreams, setPeersStream] = useState<
     { pid: string; video: MediaStream }[]
   >([]);
-  const [event, setEvent] = useState<Event>();
   const [status, setStatus] = useState('');
   const [muted, setMuted] = useState(false);
   const [close, setClose] = useState(false);
@@ -153,7 +150,8 @@ function GroupVideo() {
         setStatus('活動尚未開始');
         return null;
       }
-      setEvent(res);
+      setStatus('檢查完畢');
+      // setEvent(res);
       return null;
     });
   }, [topic, myId]);
@@ -170,7 +168,7 @@ function GroupVideo() {
       );
     }
     function setupVideo() {
-      if (!myId) return () => {};
+      if (!myId || status !== '檢查完畢') return () => {};
       const participantsRef = ref(database, `${topic}/participants`);
       const videoStreams: any = {};
 
@@ -208,16 +206,24 @@ function GroupVideo() {
     return () => {
       closeConnection();
     };
-  }, [myId]);
+  }, [myId, status]);
 
   useEffect(() => {
-    rtcSessionRef.current.close();
-  }, [close]);
+    if (status === '活動不存在') {
+      alert('No matching event!');
+      navigate('../', { replace: true });
+    } else if (status === '非活動參加者') {
+      alert('Not the participant!');
+      navigate('../', { replace: true });
+    }
+  }, [status]);
 
   useEffect(() => {
+    if (!rtcSessionRef.current) return;
     rtcSessionRef.current.muted = muted;
   }, [muted]);
 
+  if (status !== '檢查完畢') return null;
   return (
     <Wrapper>
       <VideosContainer>
