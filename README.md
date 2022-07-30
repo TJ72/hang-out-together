@@ -29,3 +29,15 @@ Website Link: <https://hang-out-together.web.app/><br/>
   + react-datepicker
   + react-moment
   + rtcfire
++ Others
+  + Lint Tools: ESLint / husky
+  + Version Control: Git / GitHub
+
+## Flow Chart
+
+## Demo
+
+## Contract
+  
+  + Author: Andy Tseng
+  + E-mail: <tjtseng1072@gmail.com> 
