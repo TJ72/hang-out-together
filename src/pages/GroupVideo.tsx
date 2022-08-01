@@ -215,6 +215,9 @@ function GroupVideo() {
     } else if (status === '非活動參加者') {
       alert('Not the participant!');
       navigate('../', { replace: true });
+    } else if (status === '活動尚未開始') {
+      alert('The event has not started!');
+      navigate('../', { replace: true });
     }
   }, [status]);
 
