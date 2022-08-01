@@ -48,7 +48,7 @@ Website Link: **[Hang Out Together](https://hang-out-together.web.app/)**
 <img width="800px" height="400px" algin="center" src="https://i.imgur.com/LBCwW1q.gif"/>
 
 + 1-on-1 Video Chat
-<img width="800px" height="400px" algin="center" src="https://i.imgur.com/IRebGTV.gif"/>
+<img width="800px" height="400px" algin="center" src="/readme_demo/1-on-1 video chat.gif"/>
 
 + Online Event
 <img width="800px" height="400px" algin="center" src="https://i.imgur.com/IRebGTV.gif"/>
